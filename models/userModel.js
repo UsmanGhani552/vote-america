@@ -18,7 +18,8 @@ const user = mongoose.Schema({
         required : true,
     },
     type: {
-        type : Number,
+        type : String,
+        enum:['user','candidate'],
         required : true,
     },
     password: {

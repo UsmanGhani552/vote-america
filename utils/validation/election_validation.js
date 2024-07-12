@@ -34,6 +34,17 @@ function electionParty(data) {
     return validateSchema(schema, data);
 }
 
+function candidateApplyForParty(data) {
+    const schema = Joi.object({
+        party_id: Joi.required(),
+        candidate_id: Joi.required(),
+    });
+
+    const result = schema.validate(data, { abortEarly: false });
+
+    return validateSchema(schema, data);
+}
+
 function validateSchema(schema, data) {
     const result = schema.validate(data, { abortEarly: false });
 
@@ -48,5 +59,6 @@ function validateSchema(schema, data) {
 module.exports = {
     election,
     electionCategory,
-    electionParty
+    electionParty,
+    candidateApplyForParty
 };

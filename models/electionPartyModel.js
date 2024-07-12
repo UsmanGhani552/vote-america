@@ -18,6 +18,11 @@ const electionParty = mongoose.Schema({
         ref: 'ElectionCategory',
         required: true
     },
+    candidate_id : [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    }],
 });
 
 module.exports = mongoose.model('ElectionParty',electionParty);

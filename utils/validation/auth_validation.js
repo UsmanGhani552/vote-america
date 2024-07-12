@@ -5,7 +5,7 @@ function register(data) {
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
     phone: Joi.string().required(),
-    type: Joi.number().required(),
+    type: Joi.string().required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).max(50).required(),
     confirm_password: Joi.any().valid(Joi.ref('password')).required().label('Confirm Password').options({ messages: { 'any.only': '{{#label}} and Password does not match' } }),

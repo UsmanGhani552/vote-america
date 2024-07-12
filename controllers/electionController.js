@@ -1,3 +1,4 @@
+const User = require('../models/userModel');
 const Election = require('../models/electionModel');
 const ElectionCategory = require('../models/electionCategoryModel');
 const validation = require('../utils/validation/election_validation');
@@ -166,7 +167,7 @@ const getElectionCategoriesByElectionId = async (req, res) => {
         });
     }
     try {
-        const electionCategories = await ElectionCategory.find({election_id}).populate('election_id');
+        const electionCategories = await ElectionCategory.find({ election_id }).populate('election_id');
         const baseUrl = `${req.protocol}://${req.get('host')}/public/election_images/`;
         return res.status(200).json({
             status_code: 200,
@@ -199,7 +200,7 @@ const storeElectionParty = async (req, res) => {
                     });
                 }
 
-                const { name ,description, election_category_id } = req.body;
+                const { name, description, election_category_id } = req.body;
                 // Check if election_id is a valid ObjectId
                 if (!mongoose.Types.ObjectId.isValid(election_category_id)) {
                     return res.status(400).json({
@@ -243,6 +244,7 @@ const storeElectionParty = async (req, res) => {
         });
     }
 }
+
 const getElectionPartiesByElectionId = async (req, res) => {
     const election_id = req.params.id;
 
@@ -254,7 +256,7 @@ const getElectionPartiesByElectionId = async (req, res) => {
         });
     }
     try {
-        const electionParties = await ElectionParty.find({election_id}).populate('election_id');
+        const electionParties = await ElectionParty.find({ election_id }).populate('election_id');
         const baseUrl = `${req.protocol}://${req.get('host')}/public/election_images/`;
         return res.status(200).json({
             status_code: 200,
@@ -268,12 +270,93 @@ const getElectionPartiesByElectionId = async (req, res) => {
         });
     }
 }
+
+const getElectionPartyByPartyId = async (req, res) => {
+    try {
+        const party_id = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(party_id)) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'Invalid Election Party Id',
+            });
+        }
+        const electionParties = await ElectionParty.findOne({ _id: party_id }).populate('candidate_id');
+        return res.status(200).json({
+            status_code: 200,
+            electionParties,
+        });
+
+    } catch (error) {
+        return res.status(401).json({
+            status_code: 400,
+            errors: error.message,
+        });
+    }
+
+
+
+}
+
+const candidateApplyForParty = async (req, res) => {
+    try {
+        const schema = validation.candidateApplyForParty(req.body);
+        if (schema.errored) {
+            return res.status(401).json({
+                errors: schema.errors
+            });
+        }
+
+        const { party_id, candidate_id } = req.body;
+
+        if (!mongoose.Types.ObjectId.isValid(party_id)) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'Invalid Election Party Id',
+            });
+        }
+        if (!mongoose.Types.ObjectId.isValid(candidate_id)) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'Invalid Candidate Id',
+            });
+        }
+        const candidate = await User.findOne({ _id: candidate_id }).exec();
+        if (!candidate) {
+            return res.status(404).json({
+                status_code: 404,
+                message: 'User not found',
+            });
+        }
+        const party = await ElectionParty.findOne({ _id: party_id }).exec();
+        if (!party) {
+            return res.status(404).json({
+                status_code: 404,
+                message: 'Election Party not found',
+            });
+        }
+
+        party.candidate_id.push(candidate_id);
+        await party.save();
+        return res.status(200).json({
+            status_code: 200,
+            message: 'Candidate applied for party successfully',
+        });
+
+    } catch (error) {
+        return res.status(401).json({
+            status_code: 400,
+            errors: error.message,
+        });
+    }
+}
+
 module.exports = {
     storeElection,
     getElections,
     storeElectionCategory,
     getElectionCategoriesByElectionId,
     storeElectionParty,
-    getElectionPartiesByElectionId
-
+    getElectionPartiesByElectionId,
+    candidateApplyForParty,
+    getElectionPartyByPartyId
 }

@@ -191,18 +191,21 @@ const forgotPassword = async (req, res) => {
             });
         }
 
-        const { phone } = req.body;
-        const user = await User.findOne({ phone });
+        const { email } = req.body;
+        const user = await User.findOne({ email });
 
         const token = generateOtp();
+        await sendOtp(email, token);
+
         user.reset_token = token;
         await user.save();
 
-        await client.messages.create({
-            from: process.env.TWILIO_PHONE_NUMBER,
-            body: `Your Reset Token is ${token}`,
-            to: phone
-        });
+        // await client.messages.create({
+        //     from: process.env.TWILIO_PHONE_NUMBER,
+        //     body: `Your Reset Token is ${token}`,
+        //     to: phone
+        // });
+        
 
         return res.status(200).json({
             status_code: 200,

@@ -52,7 +52,7 @@ function personalDetail(data) {
 
 function forgotPassword(data) {
   const schema = Joi.object({
-    phone: Joi.required(),
+    email: Joi.required(),
   });
 
   const result = schema.validate(data, { abortEarly: false });

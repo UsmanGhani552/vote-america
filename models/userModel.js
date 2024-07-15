@@ -28,23 +28,18 @@ const user = mongoose.Schema({
     },
     zip_code: {
         type : String,
-        required : true,
     },
     dob: {
         type : String,
-        required : true,
     },
     security_number: {
         type : String,
-        required : true,
     },
     front_side: {
         type : String,
-        required : true,
     },
     back_side: {
         type : String,
-        required : true,
     },
     reset_token: {
         type : String,

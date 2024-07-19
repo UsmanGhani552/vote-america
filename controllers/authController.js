@@ -205,7 +205,6 @@ const forgotPassword = async (req, res) => {
         //     body: `Your Reset Token is ${token}`,
         //     to: phone
         // });
-        
 
         return res.status(200).json({
             status_code: 200,

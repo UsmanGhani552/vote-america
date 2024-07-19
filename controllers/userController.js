@@ -23,7 +23,11 @@ const upload = multer({ storage: storage });
 
 const personalDetail = async (req, res) => {
     try {
-        upload.fields([{ name: 'front_side', maxCount: 1 }, { name: 'back_side', maxCount: 1 }])(req, res, async (err) => {
+        upload.fields([
+            { name: 'front_side', maxCount: 1 },
+            { name: 'back_side', maxCount: 1 },
+            { name: 'additional_documents', maxCount: 5 } // Adjust maxCount based on your requirements
+        ])(req, res, async (err) => {
             if (err) {
                 return res.status(400).json({
                     status_code: 400,
@@ -38,22 +42,28 @@ const personalDetail = async (req, res) => {
                         errors: schema.errors
                     });
                 }
-
                 const { zip_code, dob, security_number } = req.body;
-
+                
                 const front_side = req.files && req.files.front_side ? req.files.front_side[0].filename : null;
                 const back_side = req.files && req.files.back_side ? req.files.back_side[0].filename : null;
-
-                const token = req.header('Authorization');
-                if (!token) {
-                    return res.status(401).json({
-                        status_code: 401,
-                        message: 'Authorization token is required'
-                    });
+                const additional_documents = req.files?.additional_documents?.map(file => file.filename) || [];
+                
+                const user_details = req.user; // Access the user object attached by the verifyToken middleware
+                
+                // Create an update object based on user type
+                let updateFields = { zip_code, dob, security_number, front_side, back_side };
+                
+                if (user_details.type === 'candidate') {
+                    updateFields.additional_documents = additional_documents;
                 }
-                const user_details = getUserFromToken(token);
+                // return res.send('asd');
 
-                const updateuser = await User.updateOne({ _id: user_details.userId }, { zip_code, dob, security_number, front_side, back_side }, { runValidators: true });
+                const updateuser = await User.updateOne(
+                    { _id: user_details._id },
+                    { $set: updateFields },
+                    { runValidators: true }
+                );
+
                 if (updateuser.nModified === 0) {
                     return res.status(404).json({
                         status_code: 404,
@@ -61,7 +71,7 @@ const personalDetail = async (req, res) => {
                     });
                 }
 
-                const user = await User.findById(user_details.userId);
+                const user = await User.findById(user_details._id);
                 return res.status(200).json({
                     status_code: 200,
                     message: 'User Updated successfully.',

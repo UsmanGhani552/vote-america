@@ -38,6 +38,9 @@ const user = mongoose.Schema({
     front_side: {
         type : String,
     },
+    additional_documents: {
+        type : [String],
+    },
     back_side: {
         type : String,
     },

@@ -38,7 +38,8 @@ const storeElection = async (req, res) => {
             try {
                 const schema = validation.election(req.body);
                 if (schema.errored) {
-                    return res.status(401).json({
+                    return res.status(400).json({
+                        status_code: 400,
                         errors: schema.errors
                     });
                 }
@@ -55,20 +56,20 @@ const storeElection = async (req, res) => {
 
                 });
                 await election.save();
-                res.status(201).send({
-                    'status': 'Success',
+                res.status(200).send({
+                    status_code: 200,
                     'message': 'Election stored successfully.',
                     election,
                 });
             } catch (error) {
-                return res.status(401).json({
+                return res.status(400).json({
                     status_code: 400,
                     errors: error.message,
                 });
             }
         });
     } catch (error) {
-        return res.status(401).json({
+        return res.status(400).json({
             status_code: 400,
             errors: error.message,
         });
@@ -86,7 +87,7 @@ const getElections = async (req, res) => {
             baseUrl
         });
     } catch (error) {
-        return res.status(401).json({
+        return res.status(400).json({
             status_code: 400,
             errors: error.message,
         });
@@ -106,7 +107,8 @@ const storeElectionCategory = async (req, res) => {
             try {
                 const schema = validation.electionCategory(req.body);
                 if (schema.errored) {
-                    return res.status(401).json({
+                    return res.status(400).json({
+                        status_code: 400,
                         errors: schema.errors
                     });
                 }
@@ -142,14 +144,14 @@ const storeElectionCategory = async (req, res) => {
                     electionCategory,
                 });
             } catch (error) {
-                return res.status(401).json({
+                return res.status(400).json({
                     status_code: 400,
                     errors: error.message,
                 });
             }
         });
     } catch (error) {
-        return res.status(401).json({
+        return res.status(400).json({
             status_code: 400,
             errors: error.message,
         });
@@ -175,7 +177,7 @@ const getElectionCategoriesByElectionId = async (req, res) => {
             baseUrl
         });
     } catch (error) {
-        return res.status(401).json({
+        return res.status(400).json({
             status_code: 400,
             errors: error.message,
         });
@@ -231,14 +233,14 @@ const storeElectionParty = async (req, res) => {
                     electionParty,
                 });
             } catch (error) {
-                return res.status(401).json({
+                return res.status(400).json({
                     status_code: 400,
                     errors: error.message,
                 });
             }
         });
     } catch (error) {
-        return res.status(401).json({
+        return res.status(400).json({
             status_code: 400,
             errors: error.message,
         });
@@ -264,7 +266,7 @@ const getElectionPartiesByElectionId = async (req, res) => {
             baseUrl
         });
     } catch (error) {
-        return res.status(401).json({
+        return res.status(400).json({
             status_code: 400,
             errors: error.message,
         });
@@ -287,7 +289,7 @@ const getElectionPartyByPartyId = async (req, res) => {
         });
 
     } catch (error) {
-        return res.status(401).json({
+        return res.status(400).json({
             status_code: 400,
             errors: error.message,
         });
@@ -301,7 +303,8 @@ const candidateApplyForParty = async (req, res) => {
     try {
         const schema = validation.candidateApplyForParty(req.body);
         if (schema.errored) {
-            return res.status(401).json({
+            return res.status(400).json({
+                status_code: 400,
                 errors: schema.errors
             });
         }

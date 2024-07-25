@@ -101,6 +101,7 @@ const changePassword = async (req, res) => {
         const schema = validation.changePassword(req.body);
         if (schema.errored) {
             return res.status(400).json({
+                status_code: 400,
                 errors: schema.errors
             });
         }

@@ -6,7 +6,8 @@ const storeVote = async (req, res) => {
     try {
         const schema = validation.storeVote(req.body);
         if (schema.errored) {
-            return res.status(401).json({
+            return res.status(400).json({
+                status_code: 400,
                 errors: schema.errors
             });
         }
@@ -49,7 +50,7 @@ const storeVote = async (req, res) => {
         }
 
     } catch (error) {
-        return res.status(401).json({
+        return res.status(400).json({
             status_code: 400,
             errors: error.message,
         });

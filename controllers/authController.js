@@ -187,7 +187,8 @@ const forgotPassword = async (req, res) => {
         const schema = validation.forgotPassword(req.body);
         if (schema.errored) {
             return res.status(400).json({
-                'errors': schema.errors
+                status_code: 400,
+                errors: schema.errors
             });
         }
 
@@ -224,6 +225,7 @@ const resetPassword = async (req, res) => {
         const schema = validation.resetPassword(req.body);
         if (schema.errored) {
             return res.status(400).json({
+                status_code: 400,
                 errors: schema.errors
             });
         }

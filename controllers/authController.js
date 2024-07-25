@@ -63,18 +63,34 @@ const register = async (req, res) => {
         await sendOtp(email, otp);
 
         const hashedPassword = await bcryptjs.hash(password, 10);
-        // Create and save the new user
-        const tempUser = new TempUser({
-            first_name, last_name, email, phone, password: hashedPassword, type, otp,
-            otp_expires_at: Date.now() + 300000 // OTP expires in 5 minutes
-        });
+        // Check if TempUser already exists
+        const tempUserExist = await TempUser.findOne({ email });
 
-        if (await tempUser.save()) {
-            return res.status(200).json({
-                status_code: 200,
-                message: 'Otp Send Successfully.',
+        if (tempUserExist) {
+            // Update existing TempUser's OTP and expiration time
+            tempUserExist.otp = otp;
+            tempUserExist.otp_expires_at = Date.now() + 300000; // OTP expires in 5 minutes
+            await tempUserExist.save();
+        } else {
+            // Create and save the new TempUser
+            const tempUser = new TempUser({
+                first_name,
+                last_name,
+                email,
+                phone,
+                password: hashedPassword,
+                type,
+                otp,
+                otp_expires_at: Date.now() + 300000 // OTP expires in 5 minutes
             });
+
+            await tempUser.save();
         }
+
+        return res.status(200).json({
+            status_code: 200,
+            message: 'OTP sent successfully.',
+        });
 
     } catch (error) {
         return res.status(400).json({

@@ -20,4 +20,7 @@ userRoutes.post('/reset-password',authController.resetPassword);
 userRoutes.post('/personal-detail',verifyToken,userController.personalDetail);
 userRoutes.post('/change-password',verifyToken,userController.changePassword);
 
+//candidate
+userRoutes.get('/get-candidate-by-id/:id',userController.getCandidateById);
+
 module.exports = userRoutes;

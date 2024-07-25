@@ -4,6 +4,7 @@ const User = require('../models/userModel');
 const bcryptjs = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
+const mongoose = require('mongoose');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -132,7 +133,32 @@ const changePassword = async (req, res) => {
     }
 }
 
+const getCandidateById = async (req , res) => {
+    try {
+        const candidate_id = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(candidate_id)) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'Invalid Election Id',
+            });
+        }
+        const candidate = await User.findById(candidate_id);    
+        if(candidate){
+            return res.status(200).json({
+                status_code: 200,
+                candidate,
+            });
+        }
+    } catch (error) {
+        return res.status(400).json({
+            status_code: 400,
+            errors: error.message
+        });
+    }
+}
+
 module.exports = {
     personalDetail,
-    changePassword
+    changePassword,
+    getCandidateById
 }

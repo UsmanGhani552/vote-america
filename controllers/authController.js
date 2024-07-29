@@ -213,11 +213,15 @@ const forgotPassword = async (req, res) => {
         const token = generateOtp();
 
         const user = await User.findOne({ email });
-        if(user){
-            user.reset_token = token;
-            await user.save();
+        if(!user){
+            return res.status(400).json({
+                status_code: 400,
+                message: 'User Not Found'
+            });
         }
-
+        
+        user.reset_token = token;
+        await user.save();
         await sendOtp(email, token);
 
         // await client.messages.create({

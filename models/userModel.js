@@ -1,3 +1,4 @@
+const { type } = require('@hapi/joi/lib/extend');
 const mongoose = require('mongoose');
 
 const user = mongoose.Schema({
@@ -52,6 +53,9 @@ const user = mongoose.Schema({
     party_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ElectionParty'
+    },
+    fcm_token: {
+        type:String
     }
 });
 

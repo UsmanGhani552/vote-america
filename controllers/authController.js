@@ -167,7 +167,8 @@ const login = async (req, res) => {
                 'errors': schema.errors
             });
         }
-        const { email, password } = req.body;
+        // res.send({asda:'asda'});
+        const { email, password, fcm_token } = req.body;
 
         const user = await User.findOne({ email });
         if (!user) {
@@ -176,6 +177,7 @@ const login = async (req, res) => {
                 message: 'Authentication failed. User not found.',
             });
         }
+        
         const isPasswordValid = await bcryptjs.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(400).json({
@@ -183,6 +185,9 @@ const login = async (req, res) => {
                 message: 'Authentication failed. Invalid email or password.',
             });
         }
+        user.fcm_token = fcm_token;
+        await user.save();
+
         const token = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });
         return res.status(200).json({
             status_code: 200,
@@ -207,7 +212,6 @@ const forgotPassword = async (req, res) => {
                 errors: schema.errors
             });
         }
-        
         const { email } = req.body;
 
         const token = generateOtp();

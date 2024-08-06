@@ -16,10 +16,12 @@ function register(data) {
   return validateSchema(schema, data);
 }
 
+
 function login(data) {
   const schema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.required(),
+    password: Joi.string().required(),
+    fcm_token: Joi.string().required() // Adjust this based on your requirements
   });
 
   const result = schema.validate(data, { abortEarly: false });

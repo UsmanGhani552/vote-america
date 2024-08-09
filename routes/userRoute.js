@@ -15,6 +15,7 @@ userRoutes.post('/login',authController.login);
 userRoutes.post('/verify-otp',authController.verifyOtp);
 userRoutes.post('/forgot-password',authController.forgotPassword);
 userRoutes.post('/reset-password',authController.resetPassword);
+userRoutes.post('/resend-otp',authController.resendOtp);
 
 //user
 userRoutes.post('/personal-detail',verifyToken,userController.personalDetail);

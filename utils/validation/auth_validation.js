@@ -15,6 +15,15 @@ function register(data) {
 
   return validateSchema(schema, data);
 }
+function resendOtp(data) {
+  const schema = Joi.object({
+    email: Joi.string().email().required(),
+  });
+
+  const result = schema.validate(data, { abortEarly: false });
+
+  return validateSchema(schema, data);
+}
 
 
 function login(data) {
@@ -104,5 +113,6 @@ module.exports = {
   personalDetail,
   forgotPassword,
   resetPassword,
-  changePassword
+  changePassword,
+  resendOtp
 };

@@ -282,10 +282,55 @@ const resetPassword = async (req, res) => {
     }
 }
 
+const resendOtp = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        // Validate the email
+        const schema = validation.resendOtp({ email });
+        if (schema.errored) {
+            return res.status(400).json({
+                'errors': schema.errors
+            });
+        }
+
+        // Check if the email exists in the TempUser collection
+        const tempUserExist = await TempUser.findOne({ email });
+
+        if (!tempUserExist) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'Email not found. Please register first.',
+            });
+        }
+
+        // Generate a new OTP
+        const newOtp = generateOtp();
+        await sendOtp(email, newOtp);
+
+        // Update the OTP and expiration time in the TempUser document
+        tempUserExist.otp = newOtp;
+        tempUserExist.otp_expires_at = Date.now() + 300000; // OTP expires in 5 minutes
+        await tempUserExist.save();
+
+        return res.status(200).json({
+            status_code: 200,
+            message: 'OTP resent successfully.',
+        });
+
+    } catch (error) {
+        return res.status(400).json({
+            status_code: 400,
+            errors: error.message
+        });
+    }
+}
+
 module.exports = {
     register,
     login,
     verifyOtp,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    resendOtp
 }

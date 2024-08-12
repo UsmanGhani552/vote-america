@@ -5,26 +5,11 @@ const bcryptjs = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 const mongoose = require('mongoose');
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../public/personal_details'), function (error, success) {
-            if (error) throw error
-        });
-    },
-    filename: function (req, file, cb) {
-        const name = Date.now() + '-' + file.originalname;
-        cb(null, name, function (error1, success1) {
-            if (error1) throw error1
-        });
-    }
-});
-const upload = multer({ storage: storage });
-
+const upload = require('./mediaController');
 
 const personalDetail = async (req, res) => {
     try {
-        upload.fields([
+        upload('user_details').fields([
             { name: 'front_side', maxCount: 1 },
             { name: 'back_side', maxCount: 1 },
             { name: 'additional_documents', maxCount: 5 } // Adjust maxCount based on your requirements
@@ -45,9 +30,9 @@ const personalDetail = async (req, res) => {
                 }
                 const { zip_code, dob, security_number } = req.body;
                 
-                const front_side = req.files && req.files.front_side ? req.files.front_side[0].filename : null;
-                const back_side = req.files && req.files.back_side ? req.files.back_side[0].filename : null;
-                const additional_documents = req.files?.additional_documents?.map(file => file.filename) || [];
+                const front_side = req.files && req.files.front_side ? req.files.front_side[0].location : null;
+                const back_side = req.files && req.files.back_side ? req.files.back_side[0].location : null;
+                const additional_documents = req.files?.additional_documents?.map(file => file.location) || [];
                 
                 const user_details = req.user; // Access the user object attached by the verifyToken middleware
                 

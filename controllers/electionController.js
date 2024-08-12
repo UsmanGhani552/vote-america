@@ -2,37 +2,19 @@ const User = require('../models/userModel');
 const Election = require('../models/electionModel');
 const ElectionCategory = require('../models/electionCategoryModel');
 const validation = require('../utils/validation/election_validation');
-const multer = require('multer');
 const path = require('path');
 const mongoose = require('mongoose');
 const ElectionParty = require('../models/electionPartyModel');
-
-
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../public/election_images'), function (error, success) {
-            if (error) throw error
-        });
-    },
-    filename: function (req, file, cb) {
-        const name = Date.now() + '-' + file.originalname;
-        cb(null, name, function (error1, success1) {
-            if (error1) throw error1
-        });
-    }
-});
-const upload = multer({ storage: storage });
-
-
+const upload = require('./mediaController');
 
 const storeElection = async (req, res) => {
     try {
-        upload.fields([{ name: 'image', maxCount: 1 }, { name: 'icon', maxCount: 1 }])(req, res, async (err) => {
+        upload('elections').fields([{ name: 'image', maxCount: 1 }, { name: 'icon', maxCount: 1 }])(req, res, async (err) => {
             if (err) {
                 return res.status(400).json({
                     status_code: 400,
-                    error: 'Error uploading file.'
+                    error: err,
+                    message: 'Error uploading file(s) to S3',
                 });
             }
             try {
@@ -46,8 +28,8 @@ const storeElection = async (req, res) => {
 
                 const { name } = req.body;
 
-                const image = req.files && req.files.image ? req.files.image[0].filename : null;
-                const icon = req.files && req.files.icon ? req.files.icon[0].filename : null;
+                const image = req.files && req.files.image ? req.files.image[0].location : null;
+                const icon = req.files && req.files.icon ? req.files.icon[0].location : null;
 
                 const election = new Election({
                     name,
@@ -80,11 +62,11 @@ const storeElection = async (req, res) => {
 const getElections = async (req, res) => {
     try {
         const elections = await Election.find({});
-        const baseUrl = `${req.protocol}://${req.get('host')}/public/election_images/`;
+        // const baseUrl = `${req.protocol}://${req.get('host')}/public/election_images/`;
         return res.status(200).json({
             status_code: 200,
             elections,
-            baseUrl
+            // baseUrl
         });
     } catch (error) {
         return res.status(400).json({
@@ -97,7 +79,7 @@ const getElections = async (req, res) => {
 
 const storeElectionCategory = async (req, res) => {
     try {
-        upload.single('image')(req, res, async (err) => {
+        upload('election_category').single('image')(req, res, async (err) => {
             if (err) {
                 return res.status(400).json({
                     status_code: 400,
@@ -129,7 +111,7 @@ const storeElectionCategory = async (req, res) => {
                         message: 'Election not found',
                     })
                 }
-                const image = req.file.originalname;
+                const image = req.file.location;
 
                 const electionCategory = new ElectionCategory({
                     name,
@@ -170,11 +152,11 @@ const getElectionCategoriesByElectionId = async (req, res) => {
     }
     try {
         const electionCategories = await ElectionCategory.find({ election_id }).populate('election_id');
-        const baseUrl = `${req.protocol}://${req.get('host')}/public/election_images/`;
+        // const baseUrl = `${req.protocol}://${req.get('host')}/public/election_images/`;
         return res.status(200).json({
             status_code: 200,
             electionCategories,
-            baseUrl
+            // baseUrl
         });
     } catch (error) {
         return res.status(400).json({
@@ -186,7 +168,7 @@ const getElectionCategoriesByElectionId = async (req, res) => {
 
 const storeElectionParty = async (req, res) => {
     try {
-        upload.single('icon')(req, res, async (err) => {
+        upload('election_party').single('icon')(req, res, async (err) => {
             if (err) {
                 return res.status(400).json({
                     status_code: 400,
@@ -218,7 +200,7 @@ const storeElectionParty = async (req, res) => {
                         message: 'Election not found',
                     })
                 }
-                const icon = req.file.originalname;
+                const icon = req.file.location;
 
                 const electionParty = new ElectionParty({
                     name,
@@ -259,11 +241,11 @@ const getElectionPartiesByElectionId = async (req, res) => {
     }
     try {
         const electionParties = await ElectionParty.find({ election_id }).populate('election_id');
-        const baseUrl = `${req.protocol}://${req.get('host')}/public/election_images/`;
+        // const baseUrl = `${req.protocol}://${req.get('host')}/public/election_images/`;
         return res.status(200).json({
             status_code: 200,
             electionParties,
-            baseUrl
+            // baseUrl
         });
     } catch (error) {
         return res.status(400).json({
@@ -352,6 +334,7 @@ const candidateApplyForParty = async (req, res) => {
         });
     }
 }
+
 
 module.exports = {
     storeElection,

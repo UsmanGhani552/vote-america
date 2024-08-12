@@ -1,19 +1,12 @@
+const mongoose = require('mongoose');
 
-const  mongoose  = require("mongoose");
-
-const media = mongoose.Schema({
-    name : {
-        type: String,
-        required: true
-    },
-    path : {
-        type: String,
-        required: true
-    },
-    meta_data : {
-        type: Object,
-        required: true
-    }
+const MediaSchema = mongoose.Schema({
+    fileName: { type: String, required: true },
+    s3Key: { type: String, required: true },
+    s3Url: { type: String, required: true },
+    uploadedAt: { type: Date, default: Date.now },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } // Assuming you have a User model
 });
 
-module.exports = mongoose.model('Media',media);
+
+module.exports = mongoose.model('Media', MediaSchema);

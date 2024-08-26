@@ -13,9 +13,9 @@ const electionParty = mongoose.Schema({
         type: String,
         required: true
     },
-    election_category_id : {
+    election_id : {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'ElectionCategory',
+        ref: 'Election',
         required: true
     },
     candidate_id : [{

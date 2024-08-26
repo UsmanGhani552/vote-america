@@ -26,7 +26,7 @@ function electionParty(data) {
     const schema = Joi.object({
         name: Joi.string().required(),
         description: Joi.string().required(),
-        election_category_id: Joi.required(),
+        election_id: Joi.required(),
     });
 
     const result = schema.validate(data, { abortEarly: false });

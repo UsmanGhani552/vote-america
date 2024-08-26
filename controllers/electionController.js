@@ -183,17 +183,17 @@ const storeElectionParty = async (req, res) => {
                         errors: schema.errors
                     });
                 }
-
-                const { name, description, election_category_id } = req.body;
+                
+                const { name, description, election_id } = req.body;
                 // Check if election_id is a valid ObjectId
-                if (!mongoose.Types.ObjectId.isValid(election_category_id)) {
+                if (!mongoose.Types.ObjectId.isValid(election_id)) {
                     return res.status(400).json({
                         status_code: 400,
                         message: 'Invalid Election Id',
                     });
                 }
-
-                const existing_id = await ElectionCategory.findOne({ _id: election_category_id }).exec();
+                
+                const existing_id = await Election.findOne({ _id: election_id }).exec();
                 if (!existing_id) {
                     return res.status(400).json({
                         status_code: 400,
@@ -201,12 +201,13 @@ const storeElectionParty = async (req, res) => {
                     })
                 }
                 const icon = req.file.location;
+                // res.send('asd');
 
                 const electionParty = new ElectionParty({
                     name,
                     icon,
                     description,
-                    election_category_id,
+                    election_id,
                 });
                 await electionParty.save();
                 res.status(200).send({

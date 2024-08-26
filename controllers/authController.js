@@ -141,7 +141,7 @@ const verifyOtp = async (req, res) => {
             type: tempUser.type,
         });
         await user.save();
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
         await TempUser.deleteOne({ email });
 

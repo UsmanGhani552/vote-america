@@ -94,6 +94,16 @@ function changePassword(data) {
 
   return validateSchema(schema, data);
 }
+function changeStatus(data) {
+  const schema = Joi.object({
+    personal_details_status: Joi.number().required(),
+    government_photo_id_status: Joi.number().required(),
+  });
+
+  const result = schema.validate(data, { abortEarly: false });
+
+  return validateSchema(schema, data);
+}
 
 function validateSchema(schema, data) {
   const result = schema.validate(data, { abortEarly: false });
@@ -114,5 +124,6 @@ module.exports = {
   forgotPassword,
   resetPassword,
   changePassword,
-  resendOtp
+  resendOtp,
+  changeStatus
 };

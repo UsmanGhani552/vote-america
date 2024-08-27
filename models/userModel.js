@@ -56,7 +56,13 @@ const user = mongoose.Schema({
     },
     fcm_token: {
         type:String
-    }
+    },
+    personal_details_status: {
+        type:String
+    },
+    government_photo_id_status: {
+        type:String
+    },
 });
 
 module.exports = mongoose.model('User',user);

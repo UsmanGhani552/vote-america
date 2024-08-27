@@ -29,16 +29,16 @@ const personalDetail = async (req, res) => {
                     });
                 }
                 const { zip_code, dob, security_number } = req.body;
-                
+
                 const front_side = req.files && req.files.front_side ? req.files.front_side[0].location : null;
                 const back_side = req.files && req.files.back_side ? req.files.back_side[0].location : null;
                 const additional_documents = req.files?.additional_documents?.map(file => file.location) || [];
-                
+
                 const user_details = req.user; // Access the user object attached by the verifyToken middleware
-                
+
                 // Create an update object based on user type
                 let updateFields = { zip_code, dob, security_number, front_side, back_side };
-                
+
                 if (user_details.type === 'candidate') {
                     updateFields.additional_documents = additional_documents;
                 }
@@ -119,7 +119,7 @@ const changePassword = async (req, res) => {
     }
 }
 
-const getCandidateById = async (req , res) => {
+const getCandidateById = async (req, res) => {
     try {
         const candidate_id = req.params.id;
         if (!mongoose.Types.ObjectId.isValid(candidate_id)) {
@@ -128,8 +128,8 @@ const getCandidateById = async (req , res) => {
                 message: 'Invalid Election Id',
             });
         }
-        const candidate = await User.findById(candidate_id);    
-        if(candidate){
+        const candidate = await User.findById(candidate_id);
+        if (candidate) {
             return res.status(200).json({
                 status_code: 200,
                 candidate,
@@ -143,8 +143,41 @@ const getCandidateById = async (req , res) => {
     }
 }
 
+const changeStatus = async (req, res) => {
+    try {
+        const schema = validation.changeStatus(req.body);
+        if (schema.errored) {
+            return res.status(400).json({
+                status_code: 400,
+                errors: schema.errors
+            });
+        }
+        const { personal_details_status, government_photo_id_status } = req.body;
+
+        const token = req.header('Authorization');
+        const user_details = getUserFromToken(token);
+
+        const user = await User.findById(user_details.userId);
+        user.personal_details_status = personal_details_status;
+        user.government_photo_id_status = government_photo_id_status;
+        await user.save();
+
+        return res.status(200).json({
+            status_code: 200,
+            message: 'Status Changed successfully.',
+        });
+
+    } catch (error) {
+        return res.status(400).json({
+            status_code: 400,
+            errors: error.message
+        });
+    }
+}
+
 module.exports = {
     personalDetail,
     changePassword,
-    getCandidateById
+    getCandidateById,
+    changeStatus,
 }

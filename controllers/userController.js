@@ -175,9 +175,31 @@ const changeStatus = async (req, res) => {
     }
 }
 
+const getStatus = async(req,res) => {
+    try {
+        // Initialize the status data common to all users
+        let status = {
+            personal_details_status: req.user.personal_details_status,
+            government_photo_id_status: req.user.government_photo_id_status,
+        };
+        
+        // Add document_status only if the user is a candidate
+        if (req.user.type === 'candidate') {
+            status.document_status = req.user.document_status;
+        }
+        return res.status(200).json({
+            status_code: 200,
+            status: status,
+        });
+    } catch (error) {
+        return res.status(500).json({ message: 'Server error' });
+    }
+}
+
 module.exports = {
     personalDetail,
     changePassword,
     getCandidateById,
     changeStatus,
+    getStatus,
 }

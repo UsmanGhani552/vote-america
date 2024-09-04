@@ -132,15 +132,24 @@ const verifyOtp = async (req, res) => {
                 message: 'OTP expired.'
             });
         }
-        const user = new User({
+        const userData = {
             first_name: tempUser.first_name,
             last_name: tempUser.last_name,
             email: tempUser.email,
             phone: tempUser.phone,
             password: tempUser.password,
             type: tempUser.type,
-        });
+            personal_details_status: 'Pending',
+            government_photo_id_status: 'Pending',
+        };
+        // Add document status only if the type is 'candidate'
+        if (tempUser.type === 'candidate') {
+            userData.document_status = 'Pending';
+        }
+        // Create the User object with the conditional properties
+        const user = new User(userData);
         await user.save();
+        
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
 
         await TempUser.deleteOne({ email });

@@ -58,10 +58,19 @@ const user = mongoose.Schema({
         type:String
     },
     personal_details_status: {
-        type:String
+        type:String,
+        enum : ['Approved','Pending','Reject'],
+        default: 'Pending'
     },
     government_photo_id_status: {
-        type:String
+        type:String,
+        enum : ['Approved','Pending','Reject'],
+        default: 'Pending'
+    },
+    document_status: {
+        type:String,
+        enum : ['Approved','Pending','Reject'],
+        default: 'Pending'
     },
 });
 

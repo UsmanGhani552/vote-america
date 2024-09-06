@@ -175,22 +175,42 @@ const changeStatus = async (req, res) => {
     }
 }
 
-const getStatus = async(req,res) => {
+const getStatus = async (req, res) => {
     try {
+        // return res.send(req.user);
         // Initialize the status data common to all users
         let status = {
             personal_details_status: req.user.personal_details_status,
             government_photo_id_status: req.user.government_photo_id_status,
         };
-        
+        let personal_details = {
+            zip_code: req.user.zip_code,
+            dob: req.user.dob,
+            security_number: req.user.security_number,
+        };
+        let govt_photo_id = {
+            front_side: req.user.front_side,
+            back_side: req.user.back_side,
+        };
+        let additional_documents = {
+            additional_documents: req.user.additional_documents,
+        };
+
+        let data = {
+            status_code: 200,
+            status: status,
+            data: {
+                personal_details: personal_details,
+                govt_photo_id: govt_photo_id,
+            }
+        }
+
         // Add document_status only if the user is a candidate
         if (req.user.type === 'candidate') {
             status.document_status = req.user.document_status;
+            data.data.additional_documents = additional_documents.additional_documents;
         }
-        return res.status(200).json({
-            status_code: 200,
-            status: status,
-        });
+        return res.status(200).json(data);
     } catch (error) {
         return res.status(500).json({ message: 'Server error' });
     }

@@ -278,8 +278,6 @@ const getElectionPartyByPartyId = async (req, res) => {
         });
     }
 
-
-
 }
 
 const candidateApplyForParty = async (req, res) => {

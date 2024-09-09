@@ -152,14 +152,16 @@ const changeStatus = async (req, res) => {
                 errors: schema.errors
             });
         }
-        const { personal_details_status, government_photo_id_status } = req.body;
-
+        const { personal_details_status, government_photo_id_status,document_status } = req.body;
+        
         const token = req.header('Authorization');
         const user_details = getUserFromToken(token);
-
-        const user = await User.findById(user_details.userId);
+            const user = await User.findById(user_details.userId);
         user.personal_details_status = personal_details_status;
         user.government_photo_id_status = government_photo_id_status;
+        if(user.type == 'candidate'){
+            user.document_status = document_status;
+        }
         await user.save();
 
         return res.status(200).json({

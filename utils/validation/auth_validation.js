@@ -94,19 +94,21 @@ function changePassword(data) {
 
   return validateSchema(schema, data);
 }
-function changeStatus(data) {
+function changeStatus(data, userType) {
   const schema = Joi.object({
-    personal_details_status: Joi.number().required(),
-    government_photo_id_status: Joi.number().required(),
+    personal_details_status: Joi.required(),
+    government_photo_id_status: Joi.required(),
+    // document_status: Joi.alternatives().conditional('type', { is: 'candidate', then: Joi.required() })
+    document_status: Joi.any().when('type', { is: 'candidate', then: Joi.required(), otherwise: Joi.optional() }),
   });
 
-  const result = schema.validate(data, { abortEarly: false });
-
-  return validateSchema(schema, data);
+  return validateSchema(schema, data, { userType });
 }
-
-function validateSchema(schema, data) {
-  const result = schema.validate(data, { abortEarly: false });
+function validateSchema(schema, data, context) {
+  const result = schema.validate(data, { 
+    abortEarly: false,
+    context: context
+   });
 
   if (result.error) {
     const errors = result.error.details.map(detail => detail.message);

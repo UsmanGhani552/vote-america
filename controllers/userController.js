@@ -152,14 +152,14 @@ const changeStatus = async (req, res) => {
                 errors: schema.errors
             });
         }
-        const { personal_details_status, government_photo_id_status,document_status } = req.body;
-        
+        const { personal_details_status, government_photo_id_status, document_status } = req.body;
+
         const token = req.header('Authorization');
         const user_details = getUserFromToken(token);
-            const user = await User.findById(user_details.userId);
+        const user = await User.findById(user_details.userId);
         user.personal_details_status = personal_details_status;
         user.government_photo_id_status = government_photo_id_status;
-        if(user.type == 'candidate'){
+        if (user.type == 'candidate') {
             user.document_status = document_status;
         }
         await user.save();
@@ -218,10 +218,81 @@ const getStatus = async (req, res) => {
     }
 }
 
+const editProfile = async (req, res) => {
+    try {
+        upload('user_details').single('image')(req, res, async (err) => {
+            if (err) {
+                return res.status(400).json({
+                    status_code: 400,
+                    error: 'Error uploading file.'
+                });
+            }
+
+            try {
+                const schema = validation.editProfile(req.body);
+                if (schema.errored) {
+                    return res.status(400).json({
+                        errors: schema.errors
+                    });
+                }
+                const { first_name, last_name, phone } = req.body;
+                const image = req.file.location;
+
+                const token = req.header('Authorization');
+                const user_details = getUserFromToken(token);
+
+                const user = await User.findById(user_details.userId);
+                user.image = image;
+                user.first_name = first_name;
+                user.last_name = last_name;
+                user.phone = phone;
+                await user.save();
+                return res.status(200).json({
+                    status_code: 200,
+                    message: 'User Updated successfully.',
+                    user,
+                });
+
+            } catch (error) {
+                return res.status(400).json({
+                    status_code: 400,
+                    errors: error.message
+                });
+            }
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status_code: 400,
+            errors: error.message
+        });
+    }
+
+}
+
+const deleteAccount = async (req , res) => {
+    try{
+        const user = req.user;
+        await user.deleteOne({});
+        return res.status(200).json({
+            status_code: 200,
+            message: 'User Deleted successfully.',
+            user,
+        });
+
+    } catch (error) {
+        return res.status(400).json({
+            status_code: 400,
+            errors: error.message
+        });
+    }
+}
+
 module.exports = {
     personalDetail,
     changePassword,
     getCandidateById,
     changeStatus,
     getStatus,
+    editProfile,
+    deleteAccount
 }

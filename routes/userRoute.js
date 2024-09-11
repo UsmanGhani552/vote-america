@@ -22,6 +22,8 @@ userRoutes.post('/personal-detail',verifyToken,userController.personalDetail);
 userRoutes.post('/change-password',verifyToken,userController.changePassword);
 userRoutes.post('/change-status',verifyToken,userController.changeStatus);
 userRoutes.get('/get-status',verifyToken,userController.getStatus);
+userRoutes.post('/edit-profile',verifyToken,userController.editProfile);
+userRoutes.get('/delete-account',verifyToken,userController.deleteAccount);
 
 //candidate
 userRoutes.get('/get-candidate-by-id/:id',userController.getCandidateById);

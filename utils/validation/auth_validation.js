@@ -104,6 +104,20 @@ function changeStatus(data, userType) {
 
   return validateSchema(schema, data, { userType });
 }
+function editProfile(data, userType) {
+  const schema = Joi.object({
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    phone: Joi.string().required(),
+  });
+
+  const result = schema.validate(data, { abortEarly: false });
+
+  return validateSchema(schema, data);
+}
+
+
+
 function validateSchema(schema, data, context) {
   const result = schema.validate(data, { 
     abortEarly: false,
@@ -127,5 +141,6 @@ module.exports = {
   resetPassword,
   changePassword,
   resendOtp,
-  changeStatus
+  changeStatus,
+  editProfile
 };

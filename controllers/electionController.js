@@ -140,6 +140,21 @@ const storeElectionCategory = async (req, res) => {
     }
 }
 
+const getElectionCategories = async (req, res) => {
+    try {
+        const electionCategories = await ElectionCategory.find({ });
+        return res.status(200).json({
+            status_code: 200,
+            electionCategories,
+            // baseUrl
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status_code: 400,
+            errors: error.message,
+        });
+    }
+}
 const getElectionCategoriesByElectionId = async (req, res) => {
     const election_id = req.params.id;
 
@@ -176,7 +191,6 @@ const storeElectionParty = async (req, res) => {
                 });
             }
             try {
-                // res.json(req.file.originalname);
                 const schema = validation.electionParty(req.body);
                 if (schema.errored) {
                     return res.status(401).json({
@@ -343,5 +357,6 @@ module.exports = {
     storeElectionParty,
     getElectionPartiesByElectionId,
     candidateApplyForParty,
-    getElectionPartyByPartyId
+    getElectionPartyByPartyId,
+    getElectionCategories
 }

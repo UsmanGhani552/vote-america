@@ -9,6 +9,7 @@ const electionRoutes = express();
 electionRoutes.post('/store-election', ElectionController.storeElection);
 electionRoutes.get('/get-elections', ElectionController.getElections);
 electionRoutes.post('/store-election-category', ElectionController.storeElectionCategory);
+electionRoutes.get('/get-election-categories', ElectionController.getElectionCategories);
 electionRoutes.get('/get-election-categories-by-election-id/:id', ElectionController.getElectionCategoriesByElectionId);
 electionRoutes.post('/store-election-party', ElectionController.storeElectionParty);
 electionRoutes.get('/get-election-parties-by-election-id/:id', ElectionController.getElectionPartiesByElectionId);

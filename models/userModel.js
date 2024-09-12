@@ -75,6 +75,11 @@ const user = mongoose.Schema({
         enum : ['Approved','Pending','Reject'],
         default: 'Pending'
     },
+    candidate_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        type:String,
+    },
 });
 
 module.exports = mongoose.model('User',user);

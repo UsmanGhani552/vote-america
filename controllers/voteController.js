@@ -1,5 +1,6 @@
 const validation = require('../utils/validation/vote_validation');
 const Vote = require('../models/voteModel');
+const User = require('../models/userModel');
 const mongoose = require('mongoose');
 
 const storeVote = async (req, res) => {
@@ -36,12 +37,39 @@ const storeVote = async (req, res) => {
                 message: 'Invalid Voter Id',
             });
         }
+
+        // Check if the user has already voted for the same candidate
+        const existingVote = await Vote.findOne({
+            voter_id: voter_id,
+            candidate_id: candidate_id,
+            election_party_id: election_party_id,
+            election_category_id: election_category_id
+        });
+
+        if (existingVote) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'User has already voted for this candidate in this category and party',
+            });
+        }
+
         const vote = new Vote({
             voter_id: voter_id,
             candidate_id: candidate_id,
             election_party_id: election_party_id,
             election_category_id: election_category_id,
-        })
+        });
+        // Update user with candidate_id
+        const user = await User.findById(voter_id);
+        if (!user) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'User not found',
+            });
+        }
+        user.candidate_id = candidate_id;
+        await user.save();
+
         if (await vote.save()) {
             return res.status(200).json({
                 status_code: 200,

@@ -155,6 +155,7 @@ const getElectionCategories = async (req, res) => {
         });
     }
 }
+
 const getElectionCategoriesByElectionId = async (req, res) => {
     const election_id = req.params.id;
 

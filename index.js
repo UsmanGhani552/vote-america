@@ -13,6 +13,25 @@ const { S3Client } = require('@aws-sdk/client-s3');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
 
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:3300',
+    // 'https://beta.techverticks.com',
+    // 'http://beta.techverticks.com',
+    // 'https://admin.techverticks.com',
+    // 'http://admin.techverticks.com',
+    // 'https://techverticks.com',
+    // 'http://206.81.12.151:3300',
+    // 'www.techverticks.com',
+  ];
+
+  app.enableCors({
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTION'],
+    origin: '*',
+  });
+
+
+
 // Initialize S3 client
 const s3 = new S3Client({
     region: process.env.AWS_REGION || 'us-east-2',

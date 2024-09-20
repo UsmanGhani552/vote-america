@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const mongoose = require('./config')
 
@@ -25,10 +26,11 @@ const allowedOrigins = [
     // 'www.techverticks.com',
   ];
 
-  app.enableCors({
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTION'],
-    origin: '*',
-  });
+// Use cors middleware
+app.use(cors({
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'], // OPTIONS should be included for preflight requests
+    origin: '*' // Allow all origins
+  }));
 
 
 

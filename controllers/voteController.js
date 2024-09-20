@@ -2,6 +2,7 @@ const validation = require('../utils/validation/vote_validation');
 const Vote = require('../models/voteModel');
 const User = require('../models/userModel');
 const mongoose = require('mongoose');
+const ElectionCategory = require('../models/electionCategoryModel');
 
 const storeVote = async (req, res) => {
     try {
@@ -93,6 +94,13 @@ const getVotesByCategoryId = async (req, res) => {
                 status_code: 400,
                 message: 'Invalid Election Category Id',
             });
+        }
+        const electionCategory = await ElectionCategory.findById(election_category_id);
+        if (!electionCategory) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'Election Category not found',
+            })
         }
 
         const votes = await Vote.aggregate([

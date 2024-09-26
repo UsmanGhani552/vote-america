@@ -80,7 +80,6 @@ const personalDetail = async (req, res) => {
 
 }
 
-
 const changePassword = async (req, res) => {
     try {
         const schema = validation.changePassword(req.body);

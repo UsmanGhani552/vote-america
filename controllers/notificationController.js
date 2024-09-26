@@ -1,5 +1,6 @@
 
 const { sendNotification } = require('../services/notificationService'); 
+const Notification = require('../models/notificationModel');
 
 const sendNotifications = async (req, res) => {
     const message = {

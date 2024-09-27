@@ -151,15 +151,27 @@ const verifyOtp = async (req, res) => {
         await user.save();
         
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-
         await TempUser.deleteOne({ email });
 
+        const message = {
+            title: 'Verification in Progress:',
+            body: "Welcome to Vote America! We're verifying your information for voting. You will be able to log in once approved.",
+        }
+    
+        try {
+            // const userId = '6658a2e819086f196cd7c8a6';
+            await sendNotification(user._id , message);
+            res.status(200).send('Notification sent successfully.');
+        } catch (error) {
+            res.status(500).send(error);
+        }
         return res.status(200).json({
             status_code: 200,
             message: 'User registered successfully.',
             user,
             token,
         });
+        
     } catch (error) {
         return res.status(400).json({
             status_code: 400,

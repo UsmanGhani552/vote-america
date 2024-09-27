@@ -20,7 +20,7 @@ const sendNotifications = async (req, res) => {
 const getNotifications = async (req, res) => {
     try {
         const user = req.user;
-        const notifications = await Notification.findOne({ user_id: user.id });
+        const notifications = await Notification.find({ user_id: user.id });
         return res.status(200).json({
             status_code: 200,
             notifications,

@@ -35,6 +35,7 @@ const sendNotification = async (userId, message) => {
             user_id: userId,
             title: message.title,
             body: message.body,
+            created_at: new Date()
         });
         await notification.save();
         const response = await admin.messaging().send(payload);

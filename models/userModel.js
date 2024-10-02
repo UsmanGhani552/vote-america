@@ -18,6 +18,13 @@ const user = mongoose.Schema({
         type : String,
         required : true,
     },
+    social_id: {
+        type : String,
+    },
+    provider: {
+        type : String,
+        enum: ['facebook','google','apple'],
+    },
     image: {
         type : String,
     },

@@ -209,7 +209,7 @@ const login = async (req, res) => {
         user.fcm_token = fcm_token;
         await user.save();
 
-        const token = jwt.sign({ userId: user._id }, 'secret_key', { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user._id }, 'secret_key');
         return res.status(200).json({
             status_code: 200,
             message: 'Authentication successful',
@@ -347,11 +347,74 @@ const resendOtp = async (req, res) => {
     }
 }
 
+const socialLogin = async (req, res) => {
+    // Validate incoming request based on provider
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //     return res.status(422).json({ errors: errors.array() });
+    // }
+
+    const { first_name, last_name, email, social_id, provider, fcm_token } = req.body;
+
+    try {
+        // Check if user logged in with different provider
+        const existingProvider = await User.findOne({ social_id, provider: { $ne: provider } });
+        if (existingProvider) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'User logged in with a different provider',
+            });
+        }
+
+        // Check if user already exists with the same social_id and provider
+        let user = await User.findOne({ social_id, provider });
+        if (!user) {
+            // If user doesn't exist, create a new user
+            user = new User({
+                first_name,
+                last_name,
+                email,
+                password: await bcryptjs.hash('user1234', 10),
+                social_id,
+                provider,
+            });
+
+            await user.save();
+        }
+
+        // Check if the FCM token exists, if not, save it
+        const existingToken = await DeviceToken.findOne({ user_id: user._id, fcm_token });
+        if (!existingToken) {
+            const user_token = new DeviceToken({
+                user_id: user._id,
+                fcm_token
+            });
+            await user_token.save();
+        }
+
+        // Generate JWT Token
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+        // Return response with user and token
+        return res.status(200).json({
+            message: `User logged in with ${provider} successfully`,
+            user,
+            token,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            error: `Unable to authenticate with ${provider}: ${error.message}`,
+        });
+    }
+};
+
 module.exports = {
     register,
     login,
     verifyOtp,
     forgotPassword,
     resetPassword,
-    resendOtp
+    resendOtp,
+    socialLogin
 }

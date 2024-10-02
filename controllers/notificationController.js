@@ -24,38 +24,41 @@ const getNotifications = async (req, res) => {
         const startOfDay = new Date(date.setHours(0, 0, 0, 0)); // start of the day
         const endOfDay = new Date(date.setHours(23, 59, 59, 999)); // end of the day
         const user = req.user;
-        const todaysNotifications = await Notification.find({
-            user_id:user.id,
-            created_at:{
-                $gte:startOfDay,
-                $lte:endOfDay,
-        }});
-        const olderNotifications = await Notification.find({
-            user_id:user.id,
-            created_at:{
-                $lt:startOfDay,
-        }});
+        const notifications = await Notification.find({
+            user_id:user.id
+        });
+        // const todaysNotifications = await Notification.find({
+        //     user_id:user.id,
+        //     created_at:{
+        //         $gte:startOfDay,
+        //         $lte:endOfDay,
+        // }});
+        // const olderNotifications = await Notification.find({
+        //     user_id:user.id,
+        //     created_at:{
+        //         $lt:startOfDay,
+        // }});
 
-        const formattedNotifications = {
-            today:todaysNotifications.map(notification => ({
-                _id: notification._id,
-                user_id: notification.user_id,
-                title: notification.title,
-                body: notification.body,
-                created_at: notification.created_at,
-            })),
-            older:olderNotifications.map(notification => ({
-                _id: notification._id,
-                user_id: notification.user_id,
-                title: notification.title,
-                body: notification.body,
-                created_at: notification.created_at,
-            })),
+        // const formattedNotifications = {
+        //     today:todaysNotifications.map(notification => ({
+        //         _id: notification._id,
+        //         user_id: notification.user_id,
+        //         title: notification.title,
+        //         body: notification.body,
+        //         created_at: notification.created_at,
+        //     })),
+        //     older:olderNotifications.map(notification => ({
+        //         _id: notification._id,
+        //         user_id: notification.user_id,
+        //         title: notification.title,
+        //         body: notification.body,
+        //         created_at: notification.created_at,
+        //     })),
             
-        }
+        // }
         return res.status(200).json({
             status_code: 200,
-            formattedNotifications,
+            notifications,
         });
 
     } catch (error) {

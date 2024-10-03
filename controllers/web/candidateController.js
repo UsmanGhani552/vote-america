@@ -1,6 +1,7 @@
 const User = require('../../models/userModel');
 const mongoose = require('mongoose');
 const validation = require('../../utils/validation/auth_validation');
+const { sendNotification } = require('../../services/notificationService');
 
 const index = async (req, res) => {
     try {

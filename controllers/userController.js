@@ -258,14 +258,7 @@ const editProfile = async (req, res) => {
                     title: 'Thank You for Updating Information:',
                     body: "Thanks for updating your voter information! You're ready for the upcoming election. Make sure to cast your vote!",
                 }
-
-                try {
-                    // const userId = '6658a2e819086f196cd7c8a6';
-                    await sendNotification(user._id, message);
-                    res.status(200).send('Notification sent successfully.');
-                } catch (error) {
-                    res.status(500).send(error);
-                }
+                await sendNotification(user._id, message);
 
                 return res.status(200).json({
                     status_code: 200,

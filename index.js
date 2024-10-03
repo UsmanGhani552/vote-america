@@ -13,7 +13,7 @@ app.use(express.urlencoded({ extended: true }));
 const { S3Client } = require('@aws-sdk/client-s3');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
-
+require('./commands/dailyNotification');
 const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3300',
@@ -31,8 +31,6 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'], // OPTIONS should be included for preflight requests
     origin: '*' // Allow all origins
   }));
-
-
 
 // Initialize S3 client
 const s3 = new S3Client({

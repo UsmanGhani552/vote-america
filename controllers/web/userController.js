@@ -1,6 +1,7 @@
 const User = require('../../models/userModel');
-const mongoose  = require('mongoose');
+const mongoose = require('mongoose');
 const validation = require('../../utils/validation/auth_validation');
+const { sendNotification } = require('../../services/notificationService');
 
 const index = async (req, res) => {
     try {
@@ -26,7 +27,7 @@ const changeStatus = async (req, res) => {
                 errors: schema.errors
             });
         }
-        const {user_id} = req.params;
+        const { user_id } = req.params;
         const { personal_details_status, government_photo_id_status } = req.body;
         // if (!mongoose.Types.ObjectId.isValid(user_id)) {
         //     return res.status(400).json({
@@ -38,19 +39,13 @@ const changeStatus = async (req, res) => {
         user.personal_details_status = personal_details_status;
         user.government_photo_id_status = government_photo_id_status;
         await user.save();
-        if(user.personal_details_status && user.government_photo_id_status === 'Approved'){
+        if (user.personal_details_status && user.government_photo_id_status === 'Approved') {
             const message = {
                 title: 'Approval Notification:',
-                body:  "Your information has been verified! You can now log in and access all voting features. Thank you for your patience!",
+                body: "Your information has been verified! You can now log in and access all voting features. Thank you for your patience!",
             }
-        
-            try {
-                // const userId = '6658a2e819086f196cd7c8a6';
-                await sendNotification(user._id , message);
-                res.status(200).send('Notification sent successfully.');
-            } catch (error) {
-                res.status(500).send(error);
-            }
+            await sendNotification(user._id, message);
+
         }
 
         return res.status(200).json({

@@ -3,7 +3,7 @@ const Vote = require('../models/voteModel');
 const User = require('../models/userModel');
 const mongoose = require('mongoose');
 const ElectionCategory = require('../models/electionCategoryModel');
-const { sendNotification } = require('../services/notificationService'); 
+const { sendNotification } = require('../services/notificationService');
 
 
 const storeVote = async (req, res) => {
@@ -83,14 +83,7 @@ const storeVote = async (req, res) => {
             title: 'Election Day Participation:',
             body: "Thanks for voting! Your voice matters. Stay tuned for live updates and results.",
         }
-    
-        try {
-            // const userId = '6658a2e819086f196cd7c8a6';
-            await sendNotification(voter_id , message);
-            res.status(200).send('Notification sent successfully.');
-        } catch (error) {
-            res.status(500).send(error);
-        }
+        await sendNotification(voter_id, message);
 
     } catch (error) {
         return res.status(400).json({

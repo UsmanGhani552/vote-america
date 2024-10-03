@@ -58,6 +58,20 @@ const personalDetail = async (req, res) => {
                 }
 
                 const user = await User.findById(user_details._id);
+
+                const message = {
+                    title: 'Verification in Progress:',
+                    body:  "Welcome to Vote America! We're verifying your information for voting. You will be able to log in once approved.",
+                }
+            
+                try {
+                    // const userId = '6658a2e819086f196cd7c8a6';
+                    await sendNotification(user._id , message);
+                    res.status(200).send('Notification sent successfully.');
+                } catch (error) {
+                    res.status(500).send(error);
+                }
+
                 return res.status(200).json({
                     status_code: 200,
                     message: 'User Updated successfully.',
@@ -246,6 +260,20 @@ const editProfile = async (req, res) => {
                 user.last_name = last_name;
                 user.phone = phone;
                 await user.save();
+
+                const message = {
+                    title: 'Thank You for Updating Information:',
+                    body: "Thanks for updating your voter information! You're ready for the upcoming election. Make sure to cast your vote!",
+                }
+            
+                try {
+                    // const userId = '6658a2e819086f196cd7c8a6';
+                    await sendNotification(user._id , message);
+                    res.status(200).send('Notification sent successfully.');
+                } catch (error) {
+                    res.status(500).send(error);
+                }
+
                 return res.status(200).json({
                     status_code: 200,
                     message: 'User Updated successfully.',

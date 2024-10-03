@@ -38,6 +38,20 @@ const changeStatus = async (req, res) => {
         candidate.personal_details_status = personal_details_status;
         candidate.government_photo_id_status = government_photo_id_status;
         candidate.document_status = document_status;
+        if(candidate.personal_details_status && candidate.government_photo_id_status && candidate.document_status === 'Approved'){
+            const message = {
+                title: 'Approval Notification:',
+                body:  "Your information has been verified! You can now log in and access all voting features. Thank you for your patience!",
+            }
+        
+            try {
+                // const userId = '6658a2e819086f196cd7c8a6';
+                await sendNotification(user._id , message);
+                res.status(200).send('Notification sent successfully.');
+            } catch (error) {
+                res.status(500).send(error);
+            }
+        }
         await candidate.save();
 
         return res.status(200).json({

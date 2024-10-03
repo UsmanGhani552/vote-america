@@ -38,6 +38,7 @@ const changeStatus = async (req, res) => {
         candidate.personal_details_status = personal_details_status;
         candidate.government_photo_id_status = government_photo_id_status;
         candidate.document_status = document_status;
+        await candidate.save();
         if(candidate.personal_details_status && candidate.government_photo_id_status && candidate.document_status === 'Approved'){
             const message = {
                 title: 'Approval Notification:',
@@ -52,7 +53,6 @@ const changeStatus = async (req, res) => {
                 res.status(500).send(error);
             }
         }
-        await candidate.save();
 
         return res.status(200).json({
             status_code: 200,

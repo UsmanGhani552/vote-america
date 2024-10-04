@@ -132,7 +132,7 @@ const update = async (req, res) => {
                 }
                 
                 electionCategory.name = name;
-                electionCategory.image = req.file.location ?? electionCategory.image;
+                electionCategory.image = req.file?.location ?? electionCategory.image; // Optional chaining
                 electionCategory.description = description;
                 electionCategory.election_id = election_id;
                 await electionCategory.save();

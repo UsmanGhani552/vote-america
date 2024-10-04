@@ -130,7 +130,7 @@ const update = async (req, res) => {
                 }
 
                 electionParty.name = name,
-                electionParty.icon = req.file?.location ?? electionParty.image,
+                electionParty.icon = req.file?.location ?? electionParty.icon,
                 electionParty.description = description,
                 electionParty.election_id = election_id,
                 await electionParty.save();

@@ -130,9 +130,9 @@ const update = async (req, res) => {
                         message: 'Election not found',
                     })
                 }
-
+                
                 electionCategory.name = name;
-                electionCategory.image = req.file.location;
+                electionCategory.image = req.file.location ?? electionCategory.image;
                 electionCategory.description = description;
                 electionCategory.election_id = election_id;
                 await electionCategory.save();

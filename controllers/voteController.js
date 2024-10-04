@@ -74,16 +74,17 @@ const storeVote = async (req, res) => {
         await user.save();
 
         if (await vote.save()) {
+            const message = {
+                title: 'Election Day Participation:',
+                body: "Thanks for voting! Your voice matters. Stay tuned for live updates and results.",
+            }
+            await sendNotification(voter_id, message);
             return res.status(200).json({
                 status_code: 200,
                 message: 'Voted Successfully',
             });
         }
-        const message = {
-            title: 'Election Day Participation:',
-            body: "Thanks for voting! Your voice matters. Stay tuned for live updates and results.",
-        }
-        await sendNotification(voter_id, message);
+
 
     } catch (error) {
         return res.status(400).json({

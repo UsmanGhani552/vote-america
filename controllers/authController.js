@@ -5,6 +5,7 @@ const bcryptjs = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const validation = require('../utils/validation/auth_validation');
 const { generateOtp } = require("../utils/helper/generate_otp");
+const { sendNotification } = require("../services/notificationService");
 require('dotenv').config();
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -149,7 +150,7 @@ const verifyOtp = async (req, res) => {
         // Create the User object with the conditional properties
         const user = new User(userData);
         await user.save();
-        
+
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
         await TempUser.deleteOne({ email });
 
@@ -157,21 +158,14 @@ const verifyOtp = async (req, res) => {
             title: 'Verification in Progress:',
             body: "Welcome to Vote America! We're verifying your information for voting. You will be able to log in once approved.",
         }
-    
-        try {
-            // const userId = '6658a2e819086f196cd7c8a6';
-            await sendNotification(user._id , message);
-            res.status(200).send('Notification sent successfully.');
-        } catch (error) {
-            res.status(500).send(error);
-        }
+        await sendNotification(user._id, message);
         return res.status(200).json({
             status_code: 200,
             message: 'User registered successfully.',
             user,
             token,
         });
-        
+
     } catch (error) {
         return res.status(400).json({
             status_code: 400,
@@ -198,7 +192,7 @@ const login = async (req, res) => {
                 message: 'Authentication failed. User not found.',
             });
         }
-        
+
         const isPasswordValid = await bcryptjs.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(400).json({
@@ -238,13 +232,13 @@ const forgotPassword = async (req, res) => {
         const token = generateOtp();
 
         const user = await User.findOne({ email });
-        if(!user){
+        if (!user) {
             return res.status(400).json({
                 status_code: 400,
                 message: 'User Not Found'
             });
         }
-        
+
         user.reset_token = token;
         await user.save();
         await sendOtp(email, token);
@@ -279,7 +273,7 @@ const resetPassword = async (req, res) => {
         }
 
         const { token, password } = req.body;
-        const user = await User.findOne({ reset_token:token });
+        const user = await User.findOne({ reset_token: token });
         if (!user) {
             return res.status(400).json({
                 status_code: 400,

@@ -104,6 +104,7 @@ function changeStatus(data, userType) {
 
   return validateSchema(schema, data, { userType });
 }
+
 function editProfile(data, userType) {
   const schema = Joi.object({
     first_name: Joi.string().required(),
@@ -116,7 +117,29 @@ function editProfile(data, userType) {
   return validateSchema(schema, data);
 }
 
+function createCandidate(data) {
+  const schema = Joi.object({
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    phone: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).max(50).required(),
+    confirm_password: Joi.any()
+      .valid(Joi.ref("password"))
+      .required()
+      .label("Confirm Password")
+      .options({
+        messages: { "any.only": "{{#label}} and Password does not match" },
+      }),
+    zip_code: Joi.required(),
+    dob: Joi.required(),
+    security_number: Joi.required(),
+  });
 
+  const result = schema.validate(data, { abortEarly: false });
+
+  return validateSchema(schema, data);
+}
 
 function validateSchema(schema, data, context) {
   const result = schema.validate(data, { 
@@ -142,5 +165,6 @@ module.exports = {
   changePassword,
   resendOtp,
   changeStatus,
-  editProfile
+  editProfile,
+  createCandidate
 };

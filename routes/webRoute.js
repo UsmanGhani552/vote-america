@@ -38,8 +38,9 @@ webRoutes.post('/user/change/status/:user_id',verifyToken,userController.changeS
 
 // candidate
 webRoutes.get('/candidates',verifyToken,candidateController.index);
+webRoutes.post('/candidate/create',verifyToken,candidateController.create);
 webRoutes.post('/candidate/change/status/:candidate_id',verifyToken,candidateController.changeStatus);
-// webRoutes.post('/election/party/update/:id',verifyToken,partyController.update);
-// webRoutes.get('/election/party/delete/:id',verifyToken,partyController.destroy);
+// webRoutes.post('/election/party/update/:id',verifyToken,candidateController.update);
+webRoutes.get('/candidate/delete/:id',verifyToken,candidateController.destroy);
 
 module.exports = webRoutes;

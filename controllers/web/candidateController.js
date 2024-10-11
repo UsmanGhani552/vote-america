@@ -23,6 +23,7 @@ const index = async (req, res) => {
 const create = async (req, res) => {
     try {
         upload("user_details").fields([
+            { name: "image", maxCount: 1 },
             { name: "front_side", maxCount: 1 },
             { name: "back_side", maxCount: 1 },
             { name: "additional_documents", maxCount: 5 }, // Adjust maxCount based on your requirements
@@ -74,6 +75,9 @@ const create = async (req, res) => {
                 }
 
                 const hashedPassword = await bcryptjs.hash(password, 10);
+                const image = req.files && req.files.image
+                        ? req.files.image[0].location
+                        : null;
                 const front_side = req.files && req.files.front_side
                         ? req.files.front_side[0].location
                         : null;
@@ -99,6 +103,7 @@ const create = async (req, res) => {
                     front_side,
                     back_side,
                     additional_documents,
+                    image,
                 };
                 // Create the User object with the conditional properties
                 const candidate = new User(userData);

@@ -35,13 +35,14 @@ const create = async (req, res) => {
                 });
             }
 
+            // return res.send(req.files);
             try {
-                const schema = validation.createCandidate(req.body);
-                if (schema.errored) {
-                    return res.status(400).json({
-                        errors: schema.errors,
-                    });
-                }
+                // const schema = validation.createCandidate(req.body);
+                // if (schema.errored) {
+                //     return res.status(400).json({
+                //         errors: schema.errors,
+                //     });
+                // }
                 const {
                     first_name,
                     last_name,

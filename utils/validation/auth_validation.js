@@ -126,31 +126,25 @@ function createCandidate(data) {
     phone: Joi.string().required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).max(50).required(),
-    confirm_password: Joi.any()
-      .valid(Joi.ref("password"))
-      .required()
-      .label("Confirm Password")
-      .options({
-        messages: { "any.only": "{{#label}} and Password does not match" },
-      }),
+    confirm_password: Joi.any().valid(Joi.ref('password')).required().label('Confirm Password').options({ messages: { 'any.only': '{{#label}} and Password does not match' } }),
     zip_code: Joi.required(),
     dob: Joi.required(),
     security_number: Joi.required(),
   });
 
-  const result = schema.validate(data, { abortEarly: false });
-
-  return validateSchema(schema, data);
+  return validateSchema(schema, data);
 }
 
+
 function validateSchema(schema, data, context) {
-  const result = schema.validate(data, { 
+  const result = schema.validate(data, {
     abortEarly: false,
     context: context
-   });
+  });
 
   if (result.error) {
     const errors = result.error.details.map(detail => detail.message);
+    console.log("Validation Error: ", result.error); // Log the error to see what’s happening
     return { errored: true, errors: errors, value: result.value };
   } else {
     return { errored: false, errors: null, value: result.value };

@@ -102,7 +102,7 @@ const create = async (req, res) => {
                 // Create the User object with the conditional properties
                 const candidate = new User(userData);
                 await candidate.save();
-                return res.status(500).json({
+                return res.status(200).json({
                     status_code: 200,
                     message: 'Candidate Stored Successfully',
                     userData

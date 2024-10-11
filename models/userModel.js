@@ -46,6 +46,9 @@ const user = mongoose.Schema({
     security_number: {
         type : String,
     },
+    bio: {
+        type : String,
+    },
     front_side: {
         type : String,
     },

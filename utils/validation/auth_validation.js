@@ -49,16 +49,17 @@ function verifyOtp(data) {
   return validateSchema(schema, data);
 }
 
-function personalDetail(data) {
+function personalDetail(data, userType) {
   const schema = Joi.object({
     zip_code: Joi.required(),
     dob: Joi.required(),
     security_number: Joi.required(),
+    bio: Joi.any().when('type', { is: 'candidate', then: Joi.required(), otherwise: Joi.optional() }),
   });
 
   const result = schema.validate(data, { abortEarly: false });
 
-  return validateSchema(schema, data);
+  return validateSchema(schema, data, { userType });
 }
 
 function forgotPassword(data) {
@@ -94,6 +95,7 @@ function changePassword(data) {
 
   return validateSchema(schema, data);
 }
+
 function changeStatus(data, userType) {
   const schema = Joi.object({
     personal_details_status: Joi.required(),

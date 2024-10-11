@@ -21,9 +21,11 @@ const personalDetail = async (req, res) => {
                     error: 'Error uploading file.'
                 });
             }
-
+            const user_details = req.user;
+            const user_type = user_details.type;
+            // return res.send(user_type);
             try {
-                const schema = validation.personalDetail(req.body);
+                const schema = validation.personalDetail(req.body,user_type);
                 if (schema.errored) {
                     return res.status(400).json({
                         errors: schema.errors
@@ -34,14 +36,13 @@ const personalDetail = async (req, res) => {
                 const front_side = req.files && req.files.front_side ? req.files.front_side[0].location : null;
                 const back_side = req.files && req.files.back_side ? req.files.back_side[0].location : null;
                 const additional_documents = req.files?.additional_documents?.map(file => file.location) || [];
-
-                const user_details = req.user; // Access the user object attached by the verifyToken middleware
-
+                const {bio} = req.body;
                 // Create an update object based on user type
-                let updateFields = { zip_code, dob, security_number, front_side, back_side };
+                let updateFields = { zip_code, dob, security_number, front_side, back_side};
 
-                if (user_details.type === 'candidate') {
+                if (user_type === 'candidate') {
                     updateFields.additional_documents = additional_documents;
+                    updateFields.bio = bio;
                 }
                 // return res.send('asd');
 

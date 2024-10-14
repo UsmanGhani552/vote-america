@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 
 
 
@@ -26,7 +26,7 @@ function electionParty(data) {
     const schema = Joi.object({
         name: Joi.string().required(),
         description: Joi.string().required(),
-        election_id: Joi.required(),
+        election_category_id: Joi.string().required(),
     });
 
     const result = schema.validate(data, { abortEarly: false });

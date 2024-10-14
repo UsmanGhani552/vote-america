@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 
 function storeVote(data) {
     const schema = Joi.object({

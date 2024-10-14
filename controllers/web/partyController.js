@@ -1,6 +1,6 @@
 // const User = require('../../models/userModel');
-const Election = require('../../models/electionModel');
-// const ElectionCategory = require('../../models/electionCategoryModel');
+// const Election = require('../../models/electionModel');
+const ElectionCategory = require('../../models/electionCategoryModel');
 const validation = require('../../utils/validation/election_validation');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -41,20 +41,20 @@ const store = async (req, res) => {
                     });
                 }
                 
-                const { name, description, election_id } = req.body;
+                const { name, description, election_category_id } = req.body;
                 // Check if election_id is a valid ObjectId
-                if (!mongoose.Types.ObjectId.isValid(election_id)) {
+                if (!mongoose.Types.ObjectId.isValid(election_category_id)) {
                     return res.status(400).json({
                         status_code: 400,
                         message: 'Invalid Election Id',
                     });
                 }
                 
-                const existing_id = await Election.findOne({ _id: election_id }).exec();
+                const existing_id = await ElectionCategory.findOne({ _id: election_category_id }).exec();
                 if (!existing_id) {
                     return res.status(400).json({
                         status_code: 400,
-                        message: 'Election not found',
+                        message: 'Election Category not found',
                     })
                 }
                 const icon = req.file.location;
@@ -64,7 +64,7 @@ const store = async (req, res) => {
                     name,
                     icon,
                     description,
-                    election_id,
+                    election_category_id,
                 });
                 await electionParty.save();
                 res.status(200).send({
@@ -104,7 +104,7 @@ const update = async (req, res) => {
                     });
                 }
                 const { id } = req.params;
-                const { name, description, election_id } = req.body;
+                const { name, description, election_category_id } = req.body;
 
                 const electionParty = await ElectionParty.findById(id);
                 if (!electionParty) {
@@ -121,18 +121,18 @@ const update = async (req, res) => {
                     });
                 }
                 
-                const existing_id = await Election.findOne({ _id: election_id }).exec();
+                const existing_id = await ElectionCategory.findOne({ _id: election_category_id }).exec();
                 if (!existing_id) {
                     return res.status(400).json({
                         status_code: 400,
-                        message: 'Election not found',
+                        message: 'Election Category not found',
                     })
                 }
 
                 electionParty.name = name,
                 electionParty.icon = req.file?.location ?? electionParty.icon,
                 electionParty.description = description,
-                electionParty.election_id = election_id,
+                electionParty.election_category_id = election_category_id,
                 await electionParty.save();
                 res.status(200).send({
                     status_code: 200,

@@ -114,7 +114,7 @@ const update = async (req, res) => {
                     })
                 }
 
-                if (!mongoose.Types.ObjectId.isValid(election_id)) {
+                if (!mongoose.Types.ObjectId.isValid(election_category_id)) {
                     return res.status(400).json({
                         status_code: 400,
                         message: 'Invalid Election Id',

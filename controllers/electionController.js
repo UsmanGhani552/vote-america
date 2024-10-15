@@ -245,18 +245,18 @@ const storeElectionParty = async (req, res) => {
     }
 }
 
-const getElectionPartiesByElectionId = async (req, res) => {
-    const election_id = req.params.id;
+const getElectionPartiesByElectionCategoryId = async (req, res) => {
+    const election_category_id = req.params.id;
 
     // Validate election_id
-    if (!mongoose.Types.ObjectId.isValid(election_id)) {
+    if (!mongoose.Types.ObjectId.isValid(election_category_id)) {
         return res.status(400).json({
             status_code: 400,
             message: 'Invalid Election Id',
         });
     }
     try {
-        const electionParties = await ElectionParty.find({ election_id }).populate('election_id');
+        const electionParties = await ElectionParty.find({ election_category_id }).populate('election_category_id');
         // const baseUrl = `${req.protocol}://${req.get('host')}/public/election_images/`;
         return res.status(200).json({
             status_code: 200,
@@ -356,7 +356,7 @@ module.exports = {
     storeElectionCategory,
     getElectionCategoriesByElectionId,
     storeElectionParty,
-    getElectionPartiesByElectionId,
+    getElectionPartiesByElectionCategoryId,
     candidateApplyForParty,
     getElectionPartyByPartyId,
     getElectionCategories

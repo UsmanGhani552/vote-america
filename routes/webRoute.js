@@ -34,13 +34,15 @@ webRoutes.get('/election/party/delete/:id',verifyToken,partyController.destroy);
 webRoutes.get('/users',verifyToken,userController.index);
 webRoutes.post('/user/change/status/:user_id',verifyToken,userController.changeStatus);
 // webRoutes.post('/election/party/update/:id',verifyToken,partyController.update);
-// webRoutes.get('/election/party/delete/:id',verifyToken,partyController.destroy);
+webRoutes.get('/user/delete/:id',verifyToken,userController.destroy);
+webRoutes.get('/user/show/:id',verifyToken,userController.show);
 
 // candidate
 webRoutes.get('/candidates',verifyToken,candidateController.index);
 webRoutes.post('/candidate/create',verifyToken,candidateController.create);
 webRoutes.post('/candidate/change/status/:candidate_id',verifyToken,candidateController.changeStatus);
 // webRoutes.post('/election/party/update/:id',verifyToken,candidateController.update);
+webRoutes.get('/candidate/show/:id',verifyToken,candidateController.show);
 webRoutes.get('/candidate/delete/:id',verifyToken,candidateController.destroy);
 
 module.exports = webRoutes;

@@ -32,7 +32,7 @@ const create = async (req, res) => {
                 return res.status(400).json({
                     status_code: 400,
                     error: "Error uploading file.",
-                    msg:err
+                    msg: err
                 });
             }
 
@@ -76,11 +76,11 @@ const create = async (req, res) => {
 
                 const hashedPassword = await bcryptjs.hash(password, 10);
                 const image = req.files && req.files.image
-                        ? req.files.image[0].location
-                        : null;
+                    ? req.files.image[0].location
+                    : null;
                 const front_side = req.files && req.files.front_side
-                        ? req.files.front_side[0].location
-                        : null;
+                    ? req.files.front_side[0].location
+                    : null;
                 const back_side =
                     req.files && req.files.back_side
                         ? req.files.back_side[0].location
@@ -127,6 +127,28 @@ const create = async (req, res) => {
         });
     }
 };
+
+const show = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const candidate = await User.findById(id);
+        if (candidate.type !== 'candidate'){
+            return res.status(400).json({
+                status_code: 400,
+                message: 'Invalid Candidate Id',
+            });
+        }
+        return res.status(200).json({
+            status_code: 200,
+            candidate,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status_code: 400,
+            errors: error.message,
+        });
+    }
+}
 
 const changeStatus = async (req, res) => {
     try {
@@ -200,5 +222,6 @@ module.exports = {
     index,
     create,
     changeStatus,
-    destroy
+    destroy,
+    show
 }

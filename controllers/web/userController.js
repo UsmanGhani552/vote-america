@@ -18,6 +18,28 @@ const index = async (req, res) => {
     }
 }
 
+const show = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const candidate = await User.findById(id);
+        if (candidate.type !== 'user'){
+            return res.status(400).json({
+                status_code: 400,
+                message: 'Invalid User Id',
+            });
+        }
+        return res.status(200).json({
+            status_code: 200,
+            candidate,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status_code: 400,
+            errors: error.message,
+        });
+    }
+}
+
 const changeStatus = async (req, res) => {
     try {
         const schema = validation.changeStatus(req.body);
@@ -61,7 +83,35 @@ const changeStatus = async (req, res) => {
     }
 }
 
+const destroy = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({
+                status_code: 404,
+                message: 'User not found',
+            });
+        }
+
+        await user.deleteOne();
+
+        return res.status(200).json({
+            status_code: 200,
+            message: 'User deleted successfully.',
+        });
+    } catch (error) {
+        return res.status(400).json({
+            status_code: 400,
+            errors: error.message,
+        });
+    }
+}
+
 module.exports = {
     index,
-    changeStatus
+    changeStatus,
+    show,
+    destroy
 }

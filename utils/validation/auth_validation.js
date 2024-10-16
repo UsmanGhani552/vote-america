@@ -112,11 +112,11 @@ function editProfile(data, userType) {
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
     phone: Joi.string().required(),
+    bio: Joi.any().when(Joi.ref('$userType'), { is: 'candidate', then: Joi.required(), otherwise: Joi.optional() }),
+
   });
 
-  const result = schema.validate(data, { abortEarly: false });
-
-  return validateSchema(schema, data);
+  return validateSchema(schema, data, { userType });
 }
 
 function createCandidate(data) {
@@ -141,7 +141,7 @@ function validateSchema(schema, data, context) {
     abortEarly: false,
     context: context
   });
-
+console.log(result);
   if (result.error) {
     const errors = result.error.details.map(detail => detail.message);
     console.log("Validation Error: ", result.error); // Log the error to see what’s happening

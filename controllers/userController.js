@@ -25,7 +25,7 @@ const personalDetail = async (req, res) => {
             const user_type = user_details.type;
             // return res.send(user_type);
             try {
-                const schema = validation.personalDetail(req.body,user_type);
+                const schema = validation.personalDetail(req.body, user_type);
                 if (schema.errored) {
                     return res.status(400).json({
                         errors: schema.errors
@@ -36,9 +36,9 @@ const personalDetail = async (req, res) => {
                 const front_side = req.files && req.files.front_side ? req.files.front_side[0].location : null;
                 const back_side = req.files && req.files.back_side ? req.files.back_side[0].location : null;
                 const additional_documents = req.files?.additional_documents?.map(file => file.location) || [];
-                const {bio} = req.body;
+                const { bio } = req.body;
                 // Create an update object based on user type
-                let updateFields = { zip_code, dob, security_number, front_side, back_side};
+                let updateFields = { zip_code, dob, security_number, front_side, back_side };
 
                 if (user_type === 'candidate') {
                     updateFields.additional_documents = additional_documents;
@@ -234,25 +234,30 @@ const editProfile = async (req, res) => {
                     error: 'Error uploading file.'
                 });
             }
-
+            user_details = req.user;
+            
             try {
-                const schema = validation.editProfile(req.body);
+                const schema = validation.editProfile(req.body, user_details.type);
                 if (schema.errored) {
                     return res.status(400).json({
                         errors: schema.errors
                     });
                 }
-                const { first_name, last_name, phone } = req.body;
-                const image = req.file.location;
+                const { first_name, last_name, phone, bio } = req.body;
+                // const image = req.file.location;
 
-                const token = req.header('Authorization');
-                const user_details = getUserFromToken(token);
+                // const token = req.header('Authorization');
+                // const user_details = getUserFromToken(token);
 
-                const user = await User.findById(user_details.userId);
-                user.image = image;
-                user.first_name = first_name;
-                user.last_name = last_name;
-                user.phone = phone;
+
+                const user = await User.findById(user_details._id);
+                user.image = req.file?.location ?? user.image;
+                user.first_name = first_name ?? user.first_name;
+                user.last_name = last_name ?? user.last_name;
+                user.phone = phone ?? user.phone;
+                if (user_details.type == 'candidate') {
+                    user.bio = bio ?? user.bio;
+                }
                 await user.save();
 
                 const message = {

@@ -54,6 +54,7 @@ const create = async (req, res) => {
                     zip_code,
                     dob,
                     security_number,
+                    bio
                 } = req.body;
 
                 if (password !== confirm_password) {
@@ -104,6 +105,7 @@ const create = async (req, res) => {
                     back_side,
                     additional_documents,
                     image,
+                    bio
                 };
                 // Create the User object with the conditional properties
                 const candidate = new User(userData);

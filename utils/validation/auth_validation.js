@@ -130,6 +130,7 @@ function createCandidate(data) {
     zip_code: Joi.required(),
     dob: Joi.required(),
     security_number: Joi.required(),
+    bio: Joi.required(),
   });
 
   return validateSchema(schema, data);

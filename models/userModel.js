@@ -15,7 +15,6 @@ const user = mongoose.Schema({
     },
     phone: {
         type : String,
-        required : true,
     },
     social_id: {
         type : String,

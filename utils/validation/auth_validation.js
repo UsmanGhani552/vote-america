@@ -4,7 +4,7 @@ function register(data) {
   const schema = Joi.object({
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
-    phone: Joi.string(),
+    phone: Joi.string().allow(null),
     type: Joi.string().required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(8).max(50).required(),
@@ -111,7 +111,7 @@ function editProfile(data, userType) {
   const schema = Joi.object({
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
-    phone: Joi.string(),
+    phone: Joi.string().allow(null),
     bio: Joi.any().when(Joi.ref('$userType'), { is: 'candidate', then: Joi.required(), otherwise: Joi.optional() }),
 
   });

@@ -1,4 +1,5 @@
 const User = require('../../models/userModel');
+const Vote = require('../../models/voteModel');
 const mongoose = require('mongoose');
 const validation = require('../../utils/validation/auth_validation');
 const { sendNotification } = require('../../services/notificationService');
@@ -134,7 +135,7 @@ const show = async (req, res) => {
     try {
         const { id } = req.params;
         const candidate = await User.findById(id);
-        if (candidate.type !== 'candidate'){
+        if (candidate.type !== 'candidate') {
             return res.status(400).json({
                 status_code: 400,
                 message: 'Invalid Candidate Id',
@@ -207,6 +208,8 @@ const destroy = async (req, res) => {
             });
         }
 
+        await Vote.deleteMany({ candidate_id: id });
+        // return res.send(votes);
         await candidate.deleteOne();
 
         return res.status(200).json({

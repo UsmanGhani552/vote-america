@@ -8,8 +8,8 @@ const electionRoutes = require('./routes/electionRoute');
 const voteRoutes = require('./routes/voteRoute');
 const webRoutes = require('./routes/webRoute');
 require('dotenv').config()
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ limit: '10mb',extended: true }));
 const { S3Client } = require('@aws-sdk/client-s3');
 const multer = require('multer');
 const multerS3 = require('multer-s3');
@@ -24,13 +24,13 @@ const allowedOrigins = [
     // 'https://techverticks.com',
     // 'http://206.81.12.151:3300',
     // 'www.techverticks.com',
-  ];
+];
 
 // Use cors middleware
 app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'], // OPTIONS should be included for preflight requests
     origin: '*' // Allow all origins
-  }));
+}));
 
 // Initialize S3 client
 const s3 = new S3Client({
@@ -60,7 +60,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/test-upload', upload.single('testfile'), (req, res) => {
-    try{
+    try {
         if (req.file) {
             res.send({
                 status_code: 200,
@@ -73,7 +73,7 @@ app.post('/test-upload', upload.single('testfile'), (req, res) => {
                 error: 'File upload failed',
             });
         }
-    }catch(error){
+    } catch (error) {
         res.status(400).send({
             status_code: 400,
             error: error,
@@ -82,13 +82,13 @@ app.post('/test-upload', upload.single('testfile'), (req, res) => {
     }
 });
 
-app.use('/api',userRoutes);
-app.use('/api',electionRoutes);
-app.use('/api',voteRoutes);
+app.use('/api', userRoutes);
+app.use('/api', electionRoutes);
+app.use('/api', voteRoutes);
 
 //web
-app.use('/',webRoutes);
+app.use('/', webRoutes);
 
-app.listen(process.env.PORT,function(){
+app.listen(process.env.PORT, function () {
     console.log(`Server is running on.....${process.env.PORT}`);
 })

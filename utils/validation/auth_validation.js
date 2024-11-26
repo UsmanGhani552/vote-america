@@ -54,7 +54,7 @@ function personalDetail(data, userType) {
     zip_code: Joi.required(),
     dob: Joi.required(),
     security_number: Joi.required(),
-    bio: Joi.any().when('type', { is: 'candidate', then: Joi.required(), otherwise: Joi.optional() }),
+    bio: Joi.string(),
   });
 
   const result = schema.validate(data, { abortEarly: false });

@@ -20,7 +20,10 @@ const upload = (folderName = 'uploads') => multer({
             const fileName = `${folderName}/${Date.now().toString()}-${file.originalname}`;
             cb(null, fileName);
         }
-    })
+    }),
+    // limits: {
+    //     fileSize: 5 * 1024 * 1024 // 5 MB file size limit
+    // },
 });
 
 module.exports = upload;

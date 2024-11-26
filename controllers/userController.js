@@ -255,9 +255,9 @@ const editProfile = async (req, res) => {
                 user.first_name = first_name ?? user.first_name;
                 user.last_name = last_name ?? user.last_name;
                 user.phone = phone ?? user.phone;
-                if (user_details.type == 'candidate') {
-                    user.bio = bio ?? user.bio;
-                }
+                // if (user_details.type == 'candidate') {
+                user.bio = bio ?? user.bio;
+                // }
                 await user.save();
 
                 const message = {

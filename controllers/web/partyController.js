@@ -57,8 +57,8 @@ const store = async (req, res) => {
                         message: 'Election Category not found',
                     })
                 }
+                // res.send({file:req.file});
                 const icon = req.file.location;
-                // res.send('asd');
 
                 const electionParty = new ElectionParty({
                     name,

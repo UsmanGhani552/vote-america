@@ -13,11 +13,11 @@ const electionParty = mongoose.Schema({
         type: String,
         required: true
     },
-    election_category_id : {
+    election_category_id: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ElectionCategory',
-        required: true
-    },
+        required: true,
+    }],
     candidate_id : [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',

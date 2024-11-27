@@ -26,7 +26,7 @@ function electionParty(data) {
     const schema = Joi.object({
         name: Joi.string().required(),
         description: Joi.string().required(),
-        election_category_id: Joi.string().required(),
+        election_category_id: Joi.array().items(Joi.string().regex(/^[0-9a-fA-F]{24}$/)).required(),
     });
 
     const result = schema.validate(data, { abortEarly: false });

@@ -13,15 +13,20 @@ const client = require('twilio')(accountSid, authToken);
 
 const sendOtp = async (email, otp) => {
     let transporter = nodemailer.createTransport({
-        service: process.env.MAIL_SERVICE,
+        host: 'mail.koderspedia.net',  // Matches MAIL_HOST in Laravel
+        port: 465,
+        secure: true, 
+        // service: process.env.MAIL_SERVICE,
         auth: {
             user: process.env.MAIL_USERNAME,
             pass: process.env.MAIL_PASSWORD,
-        }
+        },
+        logger: true,  // Enable logging
+        debug: true,
     });
 
     let mailOptions = {
-        from: 'vote-america@gmail.com',
+        from: 'admin@koderspedia.net',
         to: email,
         subject: 'Your OTP Code',
         text: `Your OTP code is ${otp}`,

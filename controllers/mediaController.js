@@ -21,9 +21,9 @@ const upload = (folderName = 'uploads') => multer({
             cb(null, fileName);
         }
     }),
-    // limits: {
-    //     fileSize: 5 * 1024 * 1024 // 5 MB file size limit
-    // },
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5 MB file size limit
+    },
 });
 
 module.exports = upload;

@@ -6,6 +6,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const ElectionParty = require('../models/electionPartyModel');
 const upload = require('./mediaController');
+const { populate } = require('../models/voteModel');
 
 const storeElection = async (req, res) => {
     try {
@@ -142,7 +143,7 @@ const storeElectionCategory = async (req, res) => {
 
 const getElectionCategories = async (req, res) => {
     try {
-        const electionCategories = await ElectionCategory.find({ });
+        const electionCategories = await ElectionCategory.find({});
         return res.status(200).json({
             status_code: 200,
             electionCategories,
@@ -198,7 +199,7 @@ const storeElectionParty = async (req, res) => {
                         errors: schema.errors
                     });
                 }
-                
+
                 const { name, description, election_id } = req.body;
                 // Check if election_id is a valid ObjectId
                 if (!mongoose.Types.ObjectId.isValid(election_id)) {
@@ -207,7 +208,7 @@ const storeElectionParty = async (req, res) => {
                         message: 'Invalid Election Id',
                     });
                 }
-                
+
                 const existing_id = await Election.findOne({ _id: election_id }).exec();
                 if (!existing_id) {
                     return res.status(400).json({
@@ -273,30 +274,82 @@ const getElectionPartiesByElectionCategoryId = async (req, res) => {
 
 const getElectionPartyByPartyId = async (req, res) => {
     try {
-        const party_id = req.params.id;
+        const party_id = req.params.id; 
+        const categoryId = req.query.category_id; 
+
+       
         if (!mongoose.Types.ObjectId.isValid(party_id)) {
             return res.status(400).json({
                 status_code: 400,
                 message: 'Invalid Election Party Id',
             });
         }
-        const electionParties = await ElectionParty.findOne({ _id: party_id }).populate('candidate_id');
+
+      
+        if (categoryId && !mongoose.Types.ObjectId.isValid(categoryId)) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'Invalid Category Id',
+            });
+        }
+
+       
+        const electionParty = await ElectionParty.findOne({ _id: party_id })
+            .populate({
+                path: 'candidates', 
+                select: '-category_id',
+                    populate: {
+                        path: 'candidate_id',
+                        select: 'first_name last_name image', 
+                    }
+                        
+            });
+
+        if (!electionParty) {
+            return res.status(404).json({
+                status_code: 404,
+                message: 'Election Party not found',
+            });
+        }
+
+        // Filter candidates if categoryId is provided
+        let filteredCandidates = electionParty.candidates;
+
+        if (categoryId) {
+            filteredCandidates = filteredCandidates.filter(candidate =>
+                candidate.category_id.some(
+                    category => category.toString() === categoryId
+                )
+            );
+        }
+
+        // Respond with the filtered results (candidates filtered by category_id)
         return res.status(200).json({
             status_code: 200,
-            electionParties,
+            electionParty: {
+                _id: electionParty._id,
+                name: electionParty.name,
+                icon: electionParty.icon,
+                description: electionParty.description,
+                candidates: filteredCandidates,  // Only the filtered candidates
+            },
         });
-
     } catch (error) {
-        return res.status(400).json({
-            status_code: 400,
+        return res.status(500).json({
+            status_code: 500,
             errors: error.message,
         });
     }
+};
 
-}
+
+
+
+
 
 const candidateApplyForParty = async (req, res) => {
     try {
+        // Validate request body
         const schema = validation.candidateApplyForParty(req.body);
         if (schema.errored) {
             return res.status(400).json({
@@ -305,8 +358,9 @@ const candidateApplyForParty = async (req, res) => {
             });
         }
 
-        const { party_id, candidate_id } = req.body;
+        const { party_id, candidate_id, category_id } = req.body;
 
+        // Validate IDs
         if (!mongoose.Types.ObjectId.isValid(party_id)) {
             return res.status(400).json({
                 status_code: 400,
@@ -319,6 +373,14 @@ const candidateApplyForParty = async (req, res) => {
                 message: 'Invalid Candidate Id',
             });
         }
+        if (!mongoose.Types.ObjectId.isValid(category_id)) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'Invalid Category Id',
+            });
+        }
+
+        // Check if candidate exists
         const candidate = await User.findOne({ _id: candidate_id }).exec();
         if (!candidate) {
             return res.status(404).json({
@@ -326,6 +388,8 @@ const candidateApplyForParty = async (req, res) => {
                 message: 'User not found',
             });
         }
+
+        // Check if party exists
         const party = await ElectionParty.findOne({ _id: party_id }).exec();
         if (!party) {
             return res.status(404).json({
@@ -334,20 +398,45 @@ const candidateApplyForParty = async (req, res) => {
             });
         }
 
-        party.candidate_id.push(candidate_id);
+        // Check if the category belongs to the party
+        const isCategoryValid = party.election_category_id.some(
+            id => id.toString() === category_id
+        );
+        if (!isCategoryValid) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'This category does not belong to the specified party',
+            });
+        }
+
+        // Check if the candidate is already added to this category
+        const existingCandidate = party.candidates.find(
+            item => item.candidate_id.toString() === candidate_id && item.category_id.toString() === category_id
+        );
+
+        if (existingCandidate) {
+            return res.status(400).json({
+                status_code: 400,
+                message: 'Candidate is already applied for this category in the party',
+            });
+        }
+
+        // Add candidate with category mapping
+        party.candidates.push({ candidate_id, category_id });
         await party.save();
+
         return res.status(200).json({
             status_code: 200,
             message: 'Candidate applied for party successfully',
         });
 
     } catch (error) {
-        return res.status(401).json({
-            status_code: 400,
+        return res.status(500).json({
+            status_code: 500,
             errors: error.message,
         });
     }
-}
+};
 
 
 module.exports = {

@@ -38,6 +38,7 @@ function candidateApplyForParty(data) {
     const schema = Joi.object({
         party_id: Joi.required(),
         candidate_id: Joi.required(),
+        category_id: Joi.required(),
     });
 
     const result = schema.validate(data, { abortEarly: false });

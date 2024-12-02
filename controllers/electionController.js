@@ -300,7 +300,7 @@ const getElectionPartyByPartyId = async (req, res) => {
                 select: '-category_id',
                     populate: {
                         path: 'candidate_id',
-                        select: 'first_name last_name image', 
+                        select: 'first_name last_name image  bio', 
                     }
                         
             });

@@ -9,7 +9,7 @@ const upload = require('../mediaController');
 
 const index = async (req, res) => {
     try {
-        const electionParties = await ElectionParty.find({}).populate('candidates');
+        const electionParties = await ElectionParty.find({}).populate('candidates'); 
         return res.status(200).json({
             status_code: 200,
             electionParties,

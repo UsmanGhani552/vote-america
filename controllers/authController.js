@@ -13,9 +13,9 @@ const client = require('twilio')(accountSid, authToken);
 
 const sendOtp = async (email, otp) => {
     let transporter = nodemailer.createTransport({
-        host: process.env.MAIL_HOST,  // Matches MAIL_HOST in Laravel
+        host: 'smtp.hostinger.com',  // Matches MAIL_HOST in Laravel
         port: 465,
-        secure: true, 
+        secure: false, 
         // service: process.env.MAIL_SERVICE,
         auth: {
             user: process.env.MAIL_USERNAME,

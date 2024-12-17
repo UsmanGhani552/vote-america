@@ -15,7 +15,7 @@ const sendOtp = async (email, otp) => {
     let transporter = nodemailer.createTransport({
         host: 'smtp.hostinger.com',  // Matches MAIL_HOST in Laravel
         port: 465,
-        secure: false, 
+        secure: true, 
         // service: process.env.MAIL_SERVICE,
         auth: {
             user: process.env.MAIL_USERNAME,

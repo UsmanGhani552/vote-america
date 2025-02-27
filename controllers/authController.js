@@ -43,7 +43,7 @@ const register = async (req, res) => {
                 'errors': schema.errors
             });
         }
-        const { first_name, last_name, email, phone, password, confirm_password, type } = req.body;
+        const { first_name, last_name, email, phone, password, confirm_password, type, fcm_token } = req.body;
 
         // Check if password and confirmPassword match
         if (password !== confirm_password) {
@@ -87,6 +87,7 @@ const register = async (req, res) => {
                 password: hashedPassword,
                 type,
                 otp,
+                fcm_token,
                 otp_expires_at: Date.now() + 300000 // OTP expires in 5 minutes
             });
 
@@ -145,6 +146,7 @@ const verifyOtp = async (req, res) => {
             phone: tempUser.phone,
             password: tempUser.password,
             type: tempUser.type,
+            fcm_token: tempUser.fcm_token,
             personal_details_status: 'Pending',
             government_photo_id_status: 'Pending',
         };

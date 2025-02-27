@@ -7,6 +7,7 @@ function register(data) {
     phone: Joi.string().allow(""),
     type: Joi.string().required(),
     email: Joi.string().email().required(),
+    fcm_token: Joi.string(),
     password: Joi.string().min(8).max(50).required(),
     confirm_password: Joi.any().valid(Joi.ref('password')).required().label('Confirm Password').options({ messages: { 'any.only': '{{#label}} and Password does not match' } }),
   });

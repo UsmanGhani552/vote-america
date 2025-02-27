@@ -8,6 +8,7 @@ const tempUser = mongoose.Schema({
     password: { type: String, required: true },
     type: { type: String, required: true },
     otp: { type: String, required: true },
+    fcm_token: { type: String },
     otp_expires_at: { type: String, required: true },
 });
 

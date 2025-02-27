@@ -9,7 +9,7 @@ const sendNotifications = async (req, res) => {
     }
 
     try {
-        const userId = '66e45fec2fde5bd30cbe61d7';
+        const userId = '6658a2e819086f196cd7c8a6';
         await sendNotification(userId , message);
         res.status(200).send('Notification sent successfully.');
     } catch (error) {
